@@ -1,16 +1,3 @@
 # Python
 __pycache__/
 *.pyc
-
-# Local run artifacts
-steiner_logs/
-steiner_logs_smoke_*/
-*.log
-
-# Generated local candidates/notes
-steiner_candidate.json
-steiner_best_candidate.json
-steiner_round_notes.md
-
-# Local stamps
-.steiner_instance_stamp

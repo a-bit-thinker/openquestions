@@ -1,0 +1,23 @@
+{
+  "actual_block_count": 0,
+  "coverage_ratio": 0.0,
+  "divisibility_failures": [],
+  "duplicate_block_count": 0,
+  "evaluation_runtime_sec": 7.1e-05,
+  "exact_once_r_subsets": 0,
+  "expected_block_count": 1768,
+  "instance": {
+    "n": 17,
+    "q": 7,
+    "r": 6
+  },
+  "invalid_block_count": 0,
+  "is_valid": false,
+  "issues": [],
+  "overcovered_r_subsets": 0,
+  "overflow_multiplicity": 0,
+  "score": 0.0,
+  "total_required_r_subsets": 12376,
+  "uncovered_r_subsets": 12376,
+  "unique_covered_r_subsets": 0
+}
