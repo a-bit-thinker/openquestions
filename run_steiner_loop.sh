@@ -12,7 +12,8 @@ CODEX_REASONING_EFFORT="${CODEX_REASONING_EFFORT:-xhigh}"
 CODEX_SEARCH="${CODEX_SEARCH:-1}"
 USE_CODEX="${USE_CODEX:-1}"
 ENFORCE_FULL_QUESTION_CONSTRAINTS="${ENFORCE_FULL_QUESTION_CONSTRAINTS:-1}"
-MIN_RESEARCH_REFERENCES="${MIN_RESEARCH_REFERENCES:-3}"
+MIN_RESEARCH_REFERENCES="${MIN_RESEARCH_REFERENCES:-1}"
+MAX_ROUND1_NEW_LINKS="${MAX_ROUND1_NEW_LINKS:-3}"
 INSTANCE_JSON="${INSTANCE_JSON:-}"
 ALLOW_AUTO_INSTANCE_FALLBACK="${ALLOW_AUTO_INSTANCE_FALLBACK:-1}"
 MAX_TARGETED_SEARCH_PER_SOLVE_ROUND="${MAX_TARGETED_SEARCH_PER_SOLVE_ROUND:-1}"
@@ -34,6 +35,10 @@ LOW_TIME_SUMMARY_THRESHOLD_SEC="${LOW_TIME_SUMMARY_THRESHOLD_SEC:-200}"
 GLOBAL_RESEARCH_LOG_FILE="${GLOBAL_RESEARCH_LOG_FILE:-$LOG_ROOT/RESEARCH_LOG.md}"
 GLOBAL_PRACTICE_LOG_FILE="${GLOBAL_PRACTICE_LOG_FILE:-$LOG_ROOT/PRACTICE_LOG.md}"
 GLOBAL_LOG_MAX_BYTES="${GLOBAL_LOG_MAX_BYTES:-50000}"
+PAPERS_DIR="${PAPERS_DIR:-$PWD/papers}"
+LOCAL_PAPER_NOTES_FILE="${LOCAL_PAPER_NOTES_FILE:-$LOG_ROOT/PAPER_NOTES.md}"
+ROUND1_IDEA_COUNT="${ROUND1_IDEA_COUNT:-5}"
+ROUND_VERIFY_MAX_LOOPS="${ROUND_VERIFY_MAX_LOOPS:-3}"
 
 cd "$(dirname "$0")"
 
@@ -87,6 +92,21 @@ if ! [[ "$GLOBAL_LOG_MAX_BYTES" =~ ^[0-9]+$ ]] || (( GLOBAL_LOG_MAX_BYTES < 1000
   exit 1
 fi
 
+if ! [[ "$MAX_ROUND1_NEW_LINKS" =~ ^[0-9]+$ ]] || (( MAX_ROUND1_NEW_LINKS < 0 )); then
+  echo "MAX_ROUND1_NEW_LINKS must be an integer >= 0"
+  exit 1
+fi
+
+if ! [[ "$ROUND1_IDEA_COUNT" =~ ^[0-9]+$ ]] || (( ROUND1_IDEA_COUNT < 1 )); then
+  echo "ROUND1_IDEA_COUNT must be an integer >= 1"
+  exit 1
+fi
+
+if ! [[ "$ROUND_VERIFY_MAX_LOOPS" =~ ^[0-9]+$ ]] || (( ROUND_VERIFY_MAX_LOOPS < 1 )); then
+  echo "ROUND_VERIFY_MAX_LOOPS must be an integer >= 1"
+  exit 1
+fi
+
 if [[ "$STRICT_ROUND5_SYNTHESIS_GATE" != "0" && "$STRICT_ROUND5_SYNTHESIS_GATE" != "1" ]]; then
   echo "STRICT_ROUND5_SYNTHESIS_GATE must be 0 or 1"
   exit 1
@@ -129,6 +149,7 @@ REPO_HISTORY_FILE="$RUN_LOG_DIR/REPO_WIDE_HISTORY.md"
 
 mkdir -p "$RUN_LOG_DIR" "$CANDIDATE_DIR" "$NOTES_DIR"
 mkdir -p "$(dirname "$GLOBAL_RESEARCH_LOG_FILE")" "$(dirname "$GLOBAL_PRACTICE_LOG_FILE")"
+mkdir -p "$PAPERS_DIR" "$(dirname "$LOCAL_PAPER_NOTES_FILE")"
 
 if [[ ! -f "$KNOWLEDGE_CACHE_FILE" ]]; then
   cat > "$KNOWLEDGE_CACHE_FILE" <<EOF_CACHE
@@ -359,6 +380,14 @@ placeholders = {
     "url:",
     "takeaway:",
     "applied change from source:",
+    "applied value to proof structure:",
+    "proof target:",
+    "candidate lemma chain:",
+    "verification checkpoints:",
+    "potential failure points and fallback route:",
+    "paper:",
+    "method copied:",
+    "how it modifies steiner loop/proof strategy:",
     "round2-4 practice trend summary:",
     "generalized lessons for next research round (new hypothesis families, not repeated essay notes):",
     "-",
@@ -433,6 +462,24 @@ def note_has_signal(note_path: Path) -> bool:
             if not line:
                 continue
             if line.lower() in placeholders:
+                continue
+            if line.lower().startswith("keep to at most "):
+                continue
+            if line.lower().startswith(
+                (
+                    "url:",
+                    "takeaway:",
+                    "applied change from source:",
+                    "applied value to proof structure:",
+                    "proof target:",
+                    "candidate lemma chain:",
+                    "verification checkpoints:",
+                    "potential failure points and fallback route:",
+                    "paper:",
+                    "method copied:",
+                    "how it modifies steiner loop/proof strategy:",
+                )
+            ):
                 continue
             if line.startswith("H1:") or line.startswith("H2:") or line.startswith("H3:"):
                 continue
@@ -513,6 +560,168 @@ file_excerpt() {
   fi
 }
 
+generate_local_paper_notes() {
+  python3 - "$PAPERS_DIR" "$LOCAL_PAPER_NOTES_FILE" <<'PY'
+from __future__ import annotations
+
+import datetime as dt
+import re
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+papers_dir = Path(sys.argv[1])
+output_path = Path(sys.argv[2])
+papers_dir.mkdir(parents=True, exist_ok=True)
+output_path.parent.mkdir(parents=True, exist_ok=True)
+
+pdf_paths = sorted(papers_dir.glob("*.pdf"))
+
+lines: list[str] = [
+    "# Local Paper Notes",
+    "",
+    f"Generated (UTC): {dt.datetime.now(dt.timezone.utc).isoformat()}",
+    f"Papers directory: {papers_dir}",
+    "",
+    "## Intent",
+    "- Keep reusable local-paper reasoning so round1 focuses on proof strategy, not repeated link collection.",
+    "- Prioritize method transfer from local PDFs into solver architecture and proof artifacts.",
+    "",
+]
+
+if not pdf_paths:
+    lines.extend(
+        [
+            "- No PDFs found in `papers/` yet.",
+            "- Add PDFs and rerun the loop; this note file refreshes automatically.",
+            "",
+        ]
+    )
+    output_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print(str(output_path))
+    sys.exit(0)
+
+
+def extract_text(pdf_path: Path) -> str:
+    with tempfile.NamedTemporaryFile(prefix="paper_", suffix=".txt", delete=False) as tmp:
+        txt_path = Path(tmp.name)
+    try:
+        cmd = [
+            "gs",
+            "-q",
+            "-dNOPAUSE",
+            "-dBATCH",
+            "-sDEVICE=txtwrite",
+            f"-sOutputFile={txt_path}",
+            str(pdf_path),
+        ]
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        if result.returncode != 0:
+            return ""
+        return txt_path.read_text(encoding="utf-8", errors="ignore")
+    finally:
+        try:
+            txt_path.unlink(missing_ok=True)
+        except Exception:
+            pass
+
+
+def first_nonempty_line(text: str) -> str:
+    for raw in text.splitlines():
+        line = raw.strip()
+        if line:
+            return line
+    return ""
+
+
+def lines_by_keywords(text: str, keywords: list[str], max_lines: int = 12) -> list[str]:
+    out: list[str] = []
+    seen: set[str] = set()
+    for raw in text.splitlines():
+        line = " ".join(raw.split())
+        if not line:
+            continue
+        if len(line) < 16 or len(line) > 180:
+            continue
+        line_l = line.lower()
+        if not any(k in line_l for k in keywords):
+            continue
+        if re.fullmatch(r"[0-9 .]+", line):
+            continue
+        if line_l in seen:
+            continue
+        seen.add(line_l)
+        out.append(line)
+        if len(out) >= max_lines:
+            break
+    return out
+
+
+for pdf_path in pdf_paths:
+    text = extract_text(pdf_path)
+    if not text.strip():
+        lines.extend([f"## {pdf_path.name}", "- Text extraction failed (ghostscript txtwrite).", ""])
+        continue
+
+    title = first_nonempty_line(text) or pdf_path.stem
+    lines.extend([f"## {pdf_path.name}", f"- Parsed title hint: {title}"])
+
+    strategy_hits: list[str] = []
+    if re.search(r"Generate a small number of seed ideas", text, flags=re.IGNORECASE):
+        strategy_hits.append("Seed-idea fanout before solving (multiple independent approaches).")
+    if re.search(r"Repeat up to 3 times", text, flags=re.IGNORECASE):
+        strategy_hits.append("Bounded verify-revise loops (up to 3 rounds).")
+    if re.search(r"check.*gaps", text, flags=re.IGNORECASE):
+        strategy_hits.append("Critical-gap verification gate before accepting a proof.")
+    if re.search(r"typeset", text, flags=re.IGNORECASE):
+        strategy_hits.append("Final proof artifact pass after verification.")
+    if re.search(r"Batson|Spielman|Srivastava|barrier", text, flags=re.IGNORECASE):
+        strategy_hits.append("Use barrier-potential arguments and matrix-normalization as proof skeleton.")
+
+    lines.append("- Transfer methods to apply in Steiner loop:")
+    if strategy_hits:
+        for item in strategy_hits[:8]:
+            lines.append(f"  - {item}")
+    else:
+        lines.append("  - No high-confidence strategy hits extracted; inspect paper manually.")
+
+    prompting_snippet = lines_by_keywords(
+        text,
+        keywords=[
+            "seed ideas",
+            "repeat up to",
+            "verify",
+            "gaps",
+            "revise",
+            "typeset",
+            "template",
+            "high-level approaches",
+        ],
+        max_lines=10,
+    )
+    if prompting_snippet:
+        lines.append("- Prompting strategy excerpt:")
+        for item in prompting_snippet[:10]:
+            lines.append(f"  - {item}")
+
+    lines.append("")
+
+lines.extend(
+    [
+        "## Round1 Writing Rules",
+        "- Write reasoning-first content: proof skeleton, lemma plan, verification checkpoints, failure modes.",
+        "- Keep external links minimal and only when they unlock a missing step.",
+        "- Carry over reusable method templates from these local notes before doing new web search.",
+        "",
+    ]
+)
+
+output_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+print(str(output_path))
+PY
+}
+
 refresh_cross_run_context() {
   PRIOR_RUNS_JSON="$(discover_prior_runs_json)"
   LATEST_PRIOR_RUN_ID="$(jq -r '.latest_run_id // ""' <<<"$PRIOR_RUNS_JSON")"
@@ -534,12 +743,14 @@ refresh_cross_run_context() {
   GLOBAL_PRACTICE_LOG_BYTES="$(jq -r '.practice_bytes // 0' <<<"$GLOBAL_LOGS_JSON")"
   GLOBAL_RESEARCH_LOG_COMPACTED="$(jq -r '.research_compacted // false' <<<"$GLOBAL_LOGS_JSON")"
   GLOBAL_PRACTICE_LOG_COMPACTED="$(jq -r '.practice_compacted // false' <<<"$GLOBAL_LOGS_JSON")"
+  LOCAL_PAPER_NOTES_PATH="$(generate_local_paper_notes)"
 
   LATEST_PRIOR_ROUND1_EXCERPT="$(file_excerpt "$LATEST_PRIOR_ROUND1_NOTES" 140)"
   LATEST_PRIOR_ROUND5_EXCERPT="$(file_excerpt "$LATEST_PRIOR_ROUND5_NOTES" 180)"
   LATEST_PRIOR_TRANSFER_EXCERPT="$(file_excerpt "$LATEST_PRIOR_TRANSFER" 140)"
   GLOBAL_RESEARCH_EXCERPT="$(file_excerpt "$GLOBAL_RESEARCH_LOG_PATH" 220)"
   GLOBAL_PRACTICE_EXCERPT="$(file_excerpt "$GLOBAL_PRACTICE_LOG_PATH" 260)"
+  LOCAL_PAPER_NOTES_EXCERPT="$(file_excerpt "$LOCAL_PAPER_NOTES_PATH" 240)"
 }
 
 global_best_summary_for_instance() {
@@ -657,6 +868,7 @@ placeholders = {
     "url:",
     "takeaway:",
     "applied change from source:",
+    "applied value to proof structure:",
     "-",
 }
 
@@ -858,7 +1070,7 @@ PY
 }
 
 generate_global_knowledge_logs() {
-  python3 - "$LOG_ROOT" "$RUN_LOG_DIR" "$GLOBAL_RESEARCH_LOG_FILE" "$GLOBAL_PRACTICE_LOG_FILE" "$GLOBAL_LOG_MAX_BYTES" <<'PY'
+  python3 - "$LOG_ROOT" "$RUN_LOG_DIR" "$GLOBAL_RESEARCH_LOG_FILE" "$GLOBAL_PRACTICE_LOG_FILE" "$GLOBAL_LOG_MAX_BYTES" "$MAX_ROUND1_NEW_LINKS" <<'PY'
 from __future__ import annotations
 
 import datetime as dt
@@ -872,6 +1084,7 @@ current_run_dir = Path(sys.argv[2]).resolve()
 research_log = Path(sys.argv[3])
 practice_log = Path(sys.argv[4])
 max_bytes = max(1000, int(sys.argv[5]))
+max_round1_new_links = max(0, int(sys.argv[6]))
 
 run_dirs = sorted([p for p in log_root.glob("run_*") if p.is_dir()])
 
@@ -886,6 +1099,13 @@ placeholders = {
     "url:",
     "takeaway:",
     "applied change from source:",
+    "proof target:",
+    "candidate lemma chain:",
+    "verification checkpoints:",
+    "potential failure points and fallback route:",
+    "paper:",
+    "method copied:",
+    "how it modifies steiner loop/proof strategy:",
     "round2-4 practice trend summary:",
     "generalized lessons for next research round (new hypothesis families, not repeated essay notes):",
     "h1:",
@@ -942,6 +1162,24 @@ def extract_section_items(text: str, title: str) -> list[str]:
         line_l = line.lower()
         if line_l in placeholders:
             continue
+        if line_l.startswith("keep to at most "):
+            continue
+        if line_l.startswith(
+            (
+                "url:",
+                "takeaway:",
+                "applied change from source:",
+                "applied value to proof structure:",
+                "proof target:",
+                "candidate lemma chain:",
+                "verification checkpoints:",
+                "potential failure points and fallback route:",
+                "paper:",
+                "method copied:",
+                "how it modifies steiner loop/proof strategy:",
+            )
+        ):
+            continue
         if line_l.startswith("h1:") or line_l.startswith("h2:") or line_l.startswith("h3:"):
             continue
         items.append(line)
@@ -966,14 +1204,44 @@ for run_dir in run_dirs:
     r1_path = run_round_note(run_dir, 1)
     if r1_path.exists():
         text = r1_path.read_text(encoding="utf-8")
-        research_items = []
-        for section in ["Research (this round)", "Core advance", "Next-hypothesis", "Observations"]:
-            research_items.extend(extract_section_items(text, section))
+        reasoning_items: list[str] = []
+        for section in [
+            "Proof-oriented reasoning (round1 priority)",
+            "Method transfer from local papers",
+            "Core advance",
+            "Next-hypothesis",
+            "Observations",
+            "Work log",
+            "Plan",
+        ]:
+            reasoning_items.extend(extract_section_items(text, section))
+        external_ref_items: list[str] = []
+        for section in ["External references used (minimal)", "Research (this round)"]:
+            external_ref_items.extend(extract_section_items(text, section))
         urls = sorted(set(re.findall(r"https?://\\S+", text)))
         for url in urls:
             url_set.add(url.rstrip(").,"))
 
-        if research_items or urls:
+        if reasoning_items or external_ref_items or urls:
+            # Preserve insertion order while deduplicating.
+            dedup_reasoning: list[str] = []
+            seen_reasoning: set[str] = set()
+            for item in reasoning_items:
+                key = item.strip().lower()
+                if not key or key in seen_reasoning:
+                    continue
+                seen_reasoning.add(key)
+                dedup_reasoning.append(item)
+
+            dedup_ref_items: list[str] = []
+            seen_ref: set[str] = set()
+            for item in external_ref_items:
+                key = item.strip().lower()
+                if not key or key in seen_ref:
+                    continue
+                seen_ref.add(key)
+                dedup_ref_items.append(item)
+
             row = by_round.get("1", {})
             research_records.append(
                 {
@@ -983,8 +1251,9 @@ for run_dir in run_dirs:
                     "exact_once": row.get("exact_once", "?"),
                     "uncovered": row.get("uncovered", "?"),
                     "overcovered": row.get("overcovered", "?"),
-                    "urls": urls[:20],
-                    "takeaways": research_items[:20],
+                    "urls": urls[: max_round1_new_links if max_round1_new_links > 0 else 0],
+                    "reasoning": dedup_reasoning[:30],
+                    "external_ref_items": dedup_ref_items[:12],
                 }
             )
 
@@ -1036,7 +1305,7 @@ def render_research_full() -> str:
         "",
         "## Intent",
         "- Aggregate all run round1 knowledge to avoid repeated essay loops.",
-        "- Add new references only when practice logs expose new blockers.",
+        "- Keep reasoning/proof structure primary; keep links as supporting evidence only.",
         "",
         "## Raw Redundancy",
         "- Per-run round logs remain as source of truth under `run_*/notes/round_0001_notes.md`.",
@@ -1054,20 +1323,24 @@ def render_research_full() -> str:
                     f"overcovered={record['overcovered']}",
                 ]
             )
+            reasoning = list(record["reasoning"])
+            if reasoning:
+                lines.append("- Reasoning advances:")
+                lines.extend([f"  - {item}" for item in reasoning[:8]])
+            ref_items = list(record["external_ref_items"])
+            if ref_items:
+                lines.append("- Reference-to-proof mapping:")
+                lines.extend([f"  - {item}" for item in ref_items[:4]])
             urls = list(record["urls"])
             if urls:
-                lines.append("- URLs:")
-                lines.extend([f"  - {url}" for url in urls])
-            takeaways = list(record["takeaways"])
-            if takeaways:
-                lines.append("- Key takeaways:")
-                lines.extend([f"  - {item}" for item in takeaways])
+                lines.append("- URLs (limited):")
+                lines.extend([f"  - {url}" for url in urls[:max_round1_new_links]])
             lines.append("")
-        lines.append("## Deduplicated URL Index")
-        if url_set:
-            lines.extend([f"- {url}" for url in sorted(url_set)])
+        lines.append("## URL Index (secondary)")
+        if url_set and max_round1_new_links > 0:
+            lines.extend([f"- {url}" for url in sorted(url_set)[: max(30, max_round1_new_links * 10)]])
         else:
-            lines.append("- none")
+            lines.append("- intentionally minimized")
     return "\n".join(lines) + "\n"
 
 
@@ -1086,6 +1359,7 @@ def render_research_compact(recent_limit: int, url_limit: int) -> str:
         f"- Runs scanned: {len(run_dirs)}",
         f"- Round1 knowledge entries: {len(research_records)}",
         f"- Unique URLs tracked: {len(url_set)}",
+        f"- Max new links budget per round1: {max_round1_new_links}",
         "",
         "## Raw Redundancy",
         "- Per-run round logs remain as source of truth under `run_*/notes/round_0001_notes.md`.",
@@ -1100,15 +1374,17 @@ def render_research_compact(recent_limit: int, url_limit: int) -> str:
                 f"- {record['run_id']}: score={record['score']} valid={record['valid']} "
                 f"exact_once={record['exact_once']} uncovered={record['uncovered']} overcovered={record['overcovered']}"
             )
-            for item in list(record["takeaways"])[:3]:
-                lines.append(f"  - takeaway: {item}")
-            for url in list(record["urls"])[:2]:
+            for item in list(record["reasoning"])[:4]:
+                lines.append(f"  - reasoning: {item}")
+            for item in list(record["external_ref_items"])[:2]:
+                lines.append(f"  - reference-map: {item}")
+            for url in list(record["urls"])[:max(1, min(2, max_round1_new_links))]:
                 lines.append(f"  - url: {url}")
-    lines.extend(["", "## URL Index (sample)"])
-    if urls:
-        lines.extend([f"- {url}" for url in urls])
+    lines.extend(["", "## URL Index (sample, secondary)"])
+    if urls and max_round1_new_links > 0:
+        lines.extend([f"- {url}" for url in urls[: min(len(urls), 40)]])
     else:
-        lines.append("- none")
+        lines.append("- intentionally minimized")
     return "\n".join(lines) + "\n"
 
 
@@ -1813,12 +2089,14 @@ PRIOR_MEANINGFUL_COUNT="0"
 GLOBAL_LOGS_JSON=""
 GLOBAL_RESEARCH_LOG_PATH="$GLOBAL_RESEARCH_LOG_FILE"
 GLOBAL_PRACTICE_LOG_PATH="$GLOBAL_PRACTICE_LOG_FILE"
+LOCAL_PAPER_NOTES_PATH="$LOCAL_PAPER_NOTES_FILE"
 GLOBAL_RESEARCH_LOG_BYTES="0"
 GLOBAL_PRACTICE_LOG_BYTES="0"
 GLOBAL_RESEARCH_LOG_COMPACTED="false"
 GLOBAL_PRACTICE_LOG_COMPACTED="false"
 GLOBAL_RESEARCH_EXCERPT="(missing)"
 GLOBAL_PRACTICE_EXCERPT="(missing)"
+LOCAL_PAPER_NOTES_EXCERPT="(missing)"
 LATEST_PRIOR_ROUND1_EXCERPT="(missing)"
 LATEST_PRIOR_ROUND5_EXCERPT="(missing)"
 LATEST_PRIOR_TRANSFER_EXCERPT="(missing)"
@@ -1836,10 +2114,13 @@ echo "Exact-cover backbone enabled: $EXACT_BACKBONE_ENABLED (r-values: ${EXACT_B
 echo "Round time limit (sec): $ROUND_TIME_LIMIT_SEC"
 echo "Low-time summary threshold (sec): $LOW_TIME_SUMMARY_THRESHOLD_SEC"
 echo "Global log max bytes per file: $GLOBAL_LOG_MAX_BYTES"
+echo "Round1 external-link budget: min=$MIN_RESEARCH_REFERENCES max=$MAX_ROUND1_NEW_LINKS"
+echo "Local papers dir: $PAPERS_DIR"
 echo "Strict round-5 synthesis gate: $STRICT_ROUND5_SYNTHESIS_GATE"
 echo "Repo-wide history file: $HISTORY_PATH"
 echo "Global research log: $GLOBAL_RESEARCH_LOG_PATH"
 echo "Global practice log: $GLOBAL_PRACTICE_LOG_PATH"
+echo "Local paper notes: $LOCAL_PAPER_NOTES_PATH"
 echo "Global research log size: $GLOBAL_RESEARCH_LOG_BYTES bytes (compacted=$GLOBAL_RESEARCH_LOG_COMPACTED)"
 echo "Global practice log size: $GLOBAL_PRACTICE_LOG_BYTES bytes (compacted=$GLOBAL_PRACTICE_LOG_COMPACTED)"
 echo "Prior runs discovered: $PRIOR_RUN_COUNT (meaningful: $PRIOR_MEANINGFUL_COUNT)"
@@ -1887,6 +2168,7 @@ Expected blocks: $expected_blocks
 - Repo-wide history: $HISTORY_PATH
 - Global research log (all runs round1): $GLOBAL_RESEARCH_LOG_PATH
 - Global practice log (all runs round2-5): $GLOBAL_PRACTICE_LOG_PATH
+- Local paper notes: $LOCAL_PAPER_NOTES_PATH
 - Latest prior run: ${LATEST_PRIOR_RUN_ID:-none}
 - Latest prior round1 notes source run: ${LATEST_PRIOR_ROUND1_RUN_ID:-none}
 - Latest prior round1 notes: ${LATEST_PRIOR_ROUND1_NOTES:-missing}
@@ -1899,10 +2181,21 @@ Expected blocks: $expected_blocks
 $admissibility_json
 \`\`\`
 
-## Research (this round)
+## Proof-oriented reasoning (round1 priority)
+- Proof target:
+- Candidate lemma chain:
+- Verification checkpoints:
+- Potential failure points and fallback route:
+
+## Method transfer from local papers
+- Paper:
+- Method copied:
+- How it modifies Steiner loop/proof strategy:
+
+## External references used (minimal)
+- Keep to at most $MAX_ROUND1_NEW_LINKS new links.
 - URL:
-- Takeaway:
-- Applied change from source:
+- Applied value to proof structure:
 
 ## Plan
 - Build a reusable knowledge cache for unknown large Steiner systems.
@@ -1948,31 +2241,39 @@ Files you may edit:
 2) $notes_file
 3) $TRANSFER_FILE
 4) $HISTORY_PATH
+5) $LOCAL_PAPER_NOTES_PATH
 
 Mandatory tasks:
 1) First read cross-run memory before any new search:
+   - $LOCAL_PAPER_NOTES_PATH
    - $GLOBAL_RESEARCH_LOG_PATH
    - $GLOBAL_PRACTICE_LOG_PATH
    - $HISTORY_PATH
    - ${LATEST_PRIOR_ROUND1_NOTES:-"(missing)"}
    - ${LATEST_PRIOR_ROUND5_NOTES:-"(missing)"}
    - ${LATEST_PRIOR_TRANSFER:-"(missing)"}
-2) Build the "strong search stack" notes:
+2) Build the "proof-first round1 stack" notes:
+   - seed $ROUND1_IDEA_COUNT high-level proof ideas;
+   - solve-attempt per seed;
+   - critical-gap verification loop (up to $ROUND_VERIFY_MAX_LOOPS rounds);
+   - typeset-ready final proof outline.
+3) Build the "strong search stack" notes:
    - hard admissibility/divisibility gate;
    - symmetry/Kramer-Mesner exact-cover mode;
    - nibble -> boosting/repair -> absorber -> residual exact-cover mode.
-3) Search web/arXiv and add at least $MIN_RESEARCH_REFERENCES high-value sources to $KNOWLEDGE_CACHE_FILE.
-4) For each source include URL, 1-2 line takeaway, and explicit implementation consequence for r in {6,7,8,9}.
-5) Add one concise engine-selector rubric:
+4) Start from local papers in ./papers before web search. External web links are optional.
+5) If you still need external sources, add between $MIN_RESEARCH_REFERENCES and $MAX_ROUND1_NEW_LINKS new links max.
+6) Add one concise engine-selector rubric:
    - when symmetry/orbit compression is plausible;
    - when general randomized construction is better.
-6) In $notes_file summarize what rounds 2+ should execute and which metrics to track (point degree, (r-1)-pressure, uncovered/overcovered).
-7) Update $TRANSFER_FILE with a concise transfer-ready summary for future rounds.
-8) Avoid duplicate round-1 essays: explicitly list what was reused from prior runs and what is genuinely new.
-9) Use practice-log failures to drive research deltas:
+7) In $notes_file summarize what rounds 2+ should execute and which metrics to track (point degree, (r-1)-pressure, uncovered/overcovered).
+8) Update $TRANSFER_FILE with a concise transfer-ready summary for future rounds.
+9) Avoid duplicate round-1 essays: explicitly list what was reused from prior runs and what is genuinely new.
+10) Use practice-log failures to drive research deltas:
    - Name the blocker seen in rounds2-5;
    - Cite which source may address it;
    - State one concrete implementation change.
+11) In round1 notes, focus on reasoning and proof skeleton quality; keep links minimal.
 
 Suggested query stack:
 $query_bullets
@@ -2000,6 +2301,11 @@ $GLOBAL_RESEARCH_EXCERPT
 Global practice log excerpt:
 \`\`\`markdown
 $GLOBAL_PRACTICE_EXCERPT
+\`\`\`
+
+Local paper notes excerpt:
+\`\`\`markdown
+$LOCAL_PAPER_NOTES_EXCERPT
 \`\`\`
 
 Latest prior round1 notes excerpt:
@@ -2114,6 +2420,7 @@ Expected blocks: $expected_blocks
 - Repo-wide history: $HISTORY_PATH
 - Global research log (all runs round1): $GLOBAL_RESEARCH_LOG_PATH
 - Global practice log (all runs round2-5): $GLOBAL_PRACTICE_LOG_PATH
+- Local paper notes: $LOCAL_PAPER_NOTES_PATH
 - Latest prior run: ${LATEST_PRIOR_RUN_ID:-none}
 - Latest prior round1 notes source run: ${LATEST_PRIOR_ROUND1_RUN_ID:-none}
 - Latest prior round1 notes: ${LATEST_PRIOR_ROUND1_NOTES:-missing}
@@ -2128,13 +2435,14 @@ $admissibility_json
 \`\`\`
 
 ## Research reuse
-- Read $GLOBAL_RESEARCH_LOG_PATH, $GLOBAL_PRACTICE_LOG_PATH, then $KNOWLEDGE_CACHE_FILE.
+- Read $LOCAL_PAPER_NOTES_PATH, $GLOBAL_RESEARCH_LOG_PATH, $GLOBAL_PRACTICE_LOG_PATH, then $KNOWLEDGE_CACHE_FILE.
 - At most $MAX_TARGETED_SEARCH_PER_SOLVE_ROUND targeted search(es) if cache is insufficient.
 
 ## Plan
 - Stage A: decide engine (symmetry/orbit exact-cover vs randomized nibble pipeline).
 - Stage B: reserve flex/absorber blocks up front.
 - Stage C: improve via large-neighborhood repair and residual exact completion when eligible.
+- Stage D: run critical-gap self-verification and revise before close.
 
 ## Work log
 -
@@ -2242,6 +2550,7 @@ Files you may edit:
 5) $HISTORY_PATH
 6) $GLOBAL_RESEARCH_LOG_PATH
 7) $GLOBAL_PRACTICE_LOG_PATH
+8) $LOCAL_PAPER_NOTES_PATH
 
 Hard constraints:
 - Keep $candidate_file as JSON list of blocks.
@@ -2263,12 +2572,18 @@ Required solve architecture:
 
 Reasoning/search policy for this round:
 - First read cross-run memory before doing anything else:
+  - $LOCAL_PAPER_NOTES_PATH
   - $GLOBAL_RESEARCH_LOG_PATH
   - $GLOBAL_PRACTICE_LOG_PATH
   - $HISTORY_PATH
   - ${LATEST_PRIOR_ROUND1_NOTES:-"(missing)"}
   - ${LATEST_PRIOR_ROUND5_NOTES:-"(missing)"}
   - ${LATEST_PRIOR_TRANSFER:-"(missing)"}
+- Use a proof workflow adapted from local papers:
+  - generate 2-3 seed proof directions,
+  - draft one best attempt,
+  - run a critical-gap self-verification pass,
+  - revise if needed within this round budget.
 - First read and use cached knowledge below.
 - Avoid repeating broad web search already done in round 1.
 - At most $MAX_TARGETED_SEARCH_PER_SOLVE_ROUND targeted search(es) only if cache is insufficient.
@@ -2322,6 +2637,11 @@ $GLOBAL_RESEARCH_EXCERPT
 Global practice log excerpt:
 \`\`\`markdown
 $GLOBAL_PRACTICE_EXCERPT
+\`\`\`
+
+Local paper notes excerpt:
+\`\`\`markdown
+$LOCAL_PAPER_NOTES_EXCERPT
 \`\`\`
 
 Latest prior round1 notes excerpt:

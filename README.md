@@ -16,6 +16,7 @@
   - `steiner_round_logger.py`: round lifecycle logger (`start`, `close`, `report`).
 - `run_steiner_round.sh`: thin wrapper for single round start/close flow.
 - `run_steiner_loop.sh`: automated multi-round loop with cross-run memory.
+- `papers/`: local PDF library for reusable proof-method context.
 - `STEINER_LOOP_LOGGING.md`: detailed workflow and logging rules.
 - `PR_REVIEW.md`: review notes from merged PR variants.
 
@@ -54,6 +55,7 @@ The loop is built to preserve progress across rounds and across runs.
 - Repo-wide memory refresh each round:
   - `steiner_logs/RESEARCH_LOG.md` (round1 knowledge)
   - `steiner_logs/PRACTICE_LOG.md` (round2-5 trajectory)
+  - `steiner_logs/PAPER_NOTES.md` (auto-extracted local-paper method notes)
 - Auto-compaction of global logs via `GLOBAL_LOG_MAX_BYTES` (default `50000`).
 
 ## Important Runtime Knobs
@@ -62,6 +64,8 @@ The loop is built to preserve progress across rounds and across runs.
 - `ROUND_TIME_LIMIT_SEC`
 - `LOW_TIME_SUMMARY_THRESHOLD_SEC`
 - `GLOBAL_LOG_MAX_BYTES`
+- `PAPERS_DIR`
+- `LOCAL_PAPER_NOTES_FILE`
 - `EXACT_BACKBONE_ENABLED`
 - `AUTO_RESIDUAL_REPAIR`
 - `USE_CODEX`
@@ -80,3 +84,4 @@ GLOBAL_LOG_MAX_BYTES=50000 \
 
 - Per-run raw notes are kept as redundancy under `steiner_logs/run_*/notes/`.
 - Global research/practice logs are synthesized views and may be compacted.
+- Put PDFs in `papers/`; the loop auto-refreshes `PAPER_NOTES.md` each round and uses it in round prompts.

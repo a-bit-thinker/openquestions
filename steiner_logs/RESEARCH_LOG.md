@@ -1,46 +1,37 @@
 # Global Research Log (Round1 Knowledge)
 
-Generated (UTC): 2026-02-21T03:46:04.326579+00:00
+Generated (UTC): 2026-02-21T14:40:44.324040+00:00
 Log root: steiner_logs
-Current run dir: /root/openquestions/steiner_logs/run_20260221_013905
+Current run dir: /root/openquestions/steiner_logs/run_20260221_143916
 
 ## Intent
 - Aggregate all run round1 knowledge to avoid repeated essay loops.
-- Add new references only when practice logs expose new blockers.
+- Keep reasoning/proof structure primary; keep links as supporting evidence only.
 
 ## Raw Redundancy
 - Per-run round logs remain as source of truth under `run_*/notes/round_0001_notes.md`.
 
+### run_20260219_025532 / round_0001
+- Metrics: score=0 valid=? exact_once=0/12376 uncovered=12376 overcovered=0
+- Reasoning advances:
+  - Build a reusable knowledge cache for unknown large Steiner systems.
+  - Focus on existence conditions and practical construction heuristics.
+
 ### run_20260219_030101 / round_0001
 - Metrics: score=0 valid=? exact_once=0/12376 uncovered=12376 overcovered=0
-- Key takeaways:
-  - URL: https://arxiv.org/abs/1401.3665
-  - Takeaway: Asymptotic existence is governed by divisibility/admissibility; constructive viewpoint is probabilistic + absorption.
-  - Applied change from source: Future rounds should enforce divisibility as a strict pre-filter and use a staged construction mindset.
-  - URL: https://doi.org/10.48550/arXiv.1611.06827
-  - Takeaway: Iterative absorption provides a practical architecture (nibble -> boosting/greedy cover -> absorber-based completion).
-  - Applied change from source: Round planning should include reserved absorber resources from the start, not as a post-hoc patch.
-  - URL: https://doi.org/10.1016/S0195-6698(85)80023-8
-  - Takeaway: Nibble-style random packing efficiently gets near-complete coverage.
-  - Applied change from source: Use random greedy for bulk progress and reserve deterministic search for sparse leftovers only.
-  - URL: https://www.combinatorics.org/ojs/index.php/eljc/article/view/v4i2r19
-  - Takeaway: Random greedy processes can be monitored via regularity trajectories; stopping too late hurts structure.
-  - Applied change from source: Add online drift metrics and early-stop thresholds in future randomized runs.
+- Reasoning advances:
   - Established a high-signal reference base and converted it into a concrete rounds-2+ strategy for `r=6..9`.
   - For admissible large instances with `r=6..9`, an iterative-absorption workflow with monitored nibble phases and multi-start restarts will outperform naive exact/monolithic construction attempts.
   - The strongest consistent message is asymptotic: admissibility conditions are non-negotiable and should be enforced before any heavy search.
   - Practical construction is not one-shot exact solving; it is a pipeline where random greedy handles the bulk and structured absorption/trades finish.
   - Randomization should be treated as a first-class strategy: multiple short-to-medium runs with diagnostics likely dominate one long run.
+  - Searched arXiv/web for large Steiner-system existence and constructions.
+  - Collected primary sources: Keevash (existence/short proof/counting), iterative absorption (Glock-Kuehn-Lo-Osthus), classical nibble/packing papers, Wilson baseline.
+  - Translated literature into concrete operational choices for subsequent rounds.
 
 ### run_20260219_180444 / round_0001
 - Metrics: score=0 valid=false exact_once=0/12376 uncovered=12376 overcovered=0
-- Key takeaways:
-  - Built and documented a strong search stack in `../KNOWLEDGE_CACHE.md`:
-  - 1) hard admissibility/divisibility gate,
-  - 2) symmetry/Kramer-Mesner exact-cover mode,
-  - 3) nibble -> boosting/repair -> absorber -> residual exact-cover mode.
-  - Added high-value primary references (Keevash I/II, iterative absorption, Wilson, Kramer-Mesner, computational 6/8-design construction papers).
-  - Added an engine-selector rubric for when orbit compression is likely to win vs when randomized iterative absorption should be primary.
+- Reasoning advances:
   - Converted this run from generic notes into a concrete, source-grounded execution program:
   - strong search stack,
   - engine-selector rubric,
@@ -49,25 +40,15 @@ Current run dir: /root/openquestions/steiner_logs/run_20260221_013905
   - Hypothesis B (randomized-first): if no strong group action appears, nibble+boosting+absorber with residual exact-cover is the only scalable path for `r>=8`.
   - Current instance `S(6,7,17)` is admissible and internally consistent (`lambda_1=728`, `lambda_5=6`).
   - Admissibility is necessary only; source evidence strongly favors either:
-  - heavy symmetry compression (KM route), or
-  - iterative-absorption pipeline with residual exact cleanup.
-  - High-order search should not start without metric instrumentation; blind search will hide bottlenecks.
+- Reference-to-proof mapping:
+  - Built and documented a strong search stack in `../KNOWLEDGE_CACHE.md`:
+  - 1) hard admissibility/divisibility gate,
+  - 2) symmetry/Kramer-Mesner exact-cover mode,
+  - 3) nibble -> boosting/repair -> absorber -> residual exact-cover mode.
 
 ### run_20260220_183105 / round_0001
 - Metrics: score=0 valid=false exact_once=0/12376 uncovered=12376 overcovered=0
-- Key takeaways:
-  - URL: https://arxiv.org/abs/1401.3665
-  - Takeaway: divisibility/integrality is the first hard filter for admissibility.
-  - Applied change from source: formalized hard gate as mandatory pre-search invariant.
-  - URL: https://arxiv.org/abs/1611.06827
-  - Takeaway: iterative absorption stack (nibble -> boosting/repair -> absorber -> completion).
-  - Applied change from source: defined randomized engine phases and residual exact-cover handoff.
-  - URL: https://eudml.org/doc/247869
-  - Takeaway: practical Kramer-Mesner orbit compression with automorphism groups.
-  - Applied change from source: added symmetry/orbit-compressed exact-cover mode and viability checks.
-  - URL: https://arxiv.org/abs/cs/0011047
-  - Takeaway: DLX is an efficient sparse exact-cover backend.
-  - Applied change from source: position DLX as residual solver, not global engine for large `r`.
+- Reasoning advances:
   - advance statement: Established a dual-engine search strategy with a mandatory divisibility gate and phase-structured randomized completion.
   - Structure: hard gate + symmetry mode + randomized mode now explicitly specified.
   - Metrics selected for rounds 2+: point degree, `(r-1)`-pressure, uncovered/overcovered counts.
@@ -79,16 +60,7 @@ Current run dir: /root/openquestions/steiner_logs/run_20260221_013905
 
 ### run_20260220_215736 / round_0001
 - Metrics: score=0 valid=false exact_once=0/12376 uncovered=12376 overcovered=0
-- Key takeaways:
-  - Added high-signal references for:
-  - asymptotic existence + divisibility gate,
-  - iterative absorption pipeline,
-  - lattice-constrained decomposition,
-  - random-threshold completion behavior,
-  - symmetry/Kramer-Mesner exact-cover practice.
-  - Consolidated a two-engine strategy:
-  - symmetry/KM exact-cover,
-  - randomized nibble->repair->absorber->residual exact-cover.
+- Reasoning advances:
   - advance statement: Established a concrete dual-engine construction stack with explicit selector rules and measurable diagnostics.
   - evidence from this round (metrics, runtime, structure): Admissibility snapshot confirmed; six high-value references mapped to direct implementation consequences for `r=6..9`.
   - transfer value for next rounds: Future rounds can execute immediately without re-deriving theory-to-implementation links.
@@ -97,36 +69,49 @@ Current run dir: /root/openquestions/steiner_logs/run_20260221_013905
   - expected metric movement: Lower high-quantile `(r-1)` pressure, reduced overcoverage, smaller residual exact-cover instance.
   - falsification / stop condition: If symmetry compression is weak and pressure tails stay high across many seeds, switch to absorber-heavy randomized path only.
   - Current instance is admissible, so downstream quality is now engine-dependent.
-  - Source consensus supports hybridization: random construction plus deterministic residual closure.
-  - Symmetry methods remain high-leverage when orbit compression is strong.
+- Reference-to-proof mapping:
+  - Added high-signal references for:
+  - asymptotic existence + divisibility gate,
+  - iterative absorption pipeline,
+  - lattice-constrained decomposition,
+
+### run_20260220_222225 / round_0001
+- Metrics: score=0 valid=false exact_once=0/12376 uncovered=12376 overcovered=0
+- Reasoning advances:
+  - Build a reusable knowledge cache for unknown large Steiner systems.
+  - Keep strict admissibility as a hard gate.
+  - Define when to use symmetry/exact-cover vs nibble/absorption engines.
+
+### run_20260220_222329 / round_0001
+- Metrics: score=0 valid=false exact_once=0/12376 uncovered=12376 overcovered=0
+- Reasoning advances:
+  - Build a reusable knowledge cache for unknown large Steiner systems.
+  - Keep strict admissibility as a hard gate.
+  - Define when to use symmetry/exact-cover vs nibble/absorption engines.
 
 ### run_20260220_222441 / round_0001
 - Metrics: score=0 valid=false exact_once=0/12376 uncovered=12376 overcovered=0
-- Key takeaways:
-  - URL: https://arxiv.org/abs/1401.3665
-  - Takeaway: divisibility-driven existence backbone for designs (asymptotic).
-  - Applied change from source: kept divisibility gate as absolute precondition and documented that small-`n` search still needs explicit computational engines.
-  - URL: https://arxiv.org/abs/1611.06827
-  - Takeaway: iterative absorption gives the right staged architecture (partial random structure, then controlled completion).
-  - Applied change from source: formalized `nibble -> boosting/repair -> absorber -> residual exact-cover` as the default general pipeline.
-  - URL: https://www.sciencedirect.com/science/article/pii/S0195669885800457
-  - Takeaway: nibble-style random greedy gives high-quality near-packings quickly.
-  - Applied change from source: treat nibble as initializer and require planned repair phases rather than add-only continuation.
-  - URL: https://www.sciencedirect.com/science/article/pii/S0012365X07003524
-  - Takeaway: high-`t` constructions can become tractable under strong automorphism groups via Kramer-Mesner orbit incidence.
-  - Applied change from source: retained symmetry/orbit compression as first engine with explicit quick-switch criteria.
-  - URL: https://digitalcommons.mtu.edu/michigantech-p2/2010/
-  - Takeaway: symmetry-aware meet-in-the-middle and branch-and-bound heuristics materially improve exact search.
-  - Applied change from source: reserved as residual micro-solver only after large residual reduction.
+- Reasoning advances:
   - Converted prior heuristic policy into a source-backed, transfer-ready dual-engine protocol with explicit switch rules and per-`r` consequences.
   - Mandatory cross-run reads completed first, then targeted paper search.
   - Added six primary sources to the cache and linked each to concrete implementation actions for `r=6,7,8,9`.
   - Captured round-2+ stage execution order and mandatory metric set.
   - Next rounds can execute directly from the stage protocol without re-deriving theory.
+  - Engine selection now has explicit criteria instead of ad-hoc switching.
+  - A fixed symmetry budget plus early fallback into absorber-aware repair will outperform symmetry-heavy attempts on `r=8,9` while preserving strict feasibility.
+  - Prior diagnostics show non-binary orbit inflation at larger `r`; longer symmetry search has low marginal value compared with repair passes that directly reduce uncovered mass.
+
+### run_20260221_011431 / round_0001
+- Metrics: score=0 valid=false exact_once=0/12376 uncovered=12376 overcovered=0
+- Reasoning advances:
+  - Build a reusable knowledge cache for unknown large Steiner systems.
+  - Keep strict admissibility as a hard gate.
+  - Define when to use symmetry/exact-cover vs nibble/absorption engines.
+  - Add new references only if practice logs expose a gap not already covered in global research log.
 
 ### run_20260221_013905 / round_0001
 - Metrics: score=0 valid=false exact_once=0/12376 uncovered=12376 overcovered=0
-- Key takeaways:
+- Reasoning advances:
   - Converted round-1 research into a blocker-driven execution contract: bounded symmetry gate, monitored randomized pipeline, weighted-orbit fallback, and explicit handoff triggers.
   - Mandatory cross-run files were read first.
   - Added five web/arXiv references tied to explicit `r=6..9` consequences.
@@ -135,13 +120,38 @@ Current run dir: /root/openquestions/steiner_logs/run_20260221_013905
   - Practice blockers now map directly to source-backed implementation changes.
   - A short symmetry front gate plus pressure-triggered early handoff to motif-targeted reserve-aware repair will outperform longer symmetry-heavy or additive-only runs for `r=8,9`, while preserving strict feasibility for all `r=6..9`.
   - Practice logs show plateaus at saturated `(r-1)` motifs and sparse augmenting moves; early switch avoids wasting budget on structurally mismatched binary-orbit search.
-  - `r=6,7`: modest but consistent block-count gains from symmetry-aided local exact neighborhoods.
-  - `r=8,9`: larger uncovered reduction at fixed budget via earlier repair entry and better motif targeting.
-  - Maintain `overcovered=0` and zero `(r-1)` oversubscription.
-  - Reject if bounded symmetry probes produce better gain-per-time than early repair across at least three matched seeds, or if early handoff does not improve uncovered reduction rate over baseline.
-  - Cross-run solve logs show consistent strict-feasible progress but repeated plateau behavior.
-  - The most repeatable failure mode is not admissibility; it is wrong-engine persistence after symmetry diagnostics fail.
-  - Early handoff plus motif-targeted repair is the highest-signal change supported by both practice logs and sources.
 
-## Deduplicated URL Index
-- none
+### run_20260221_143515 / round_0001
+- Metrics: score=0 valid=false exact_once=0/12376 uncovered=12376 overcovered=0
+- Reasoning advances:
+  - Build a reusable knowledge cache for unknown large Steiner systems.
+  - Keep strict admissibility as a hard gate.
+  - Define when to use symmetry/exact-cover vs nibble/absorption engines.
+  - Add new references only if practice logs expose a gap not already covered in global research log.
+
+### run_20260221_143650 / round_0001
+- Metrics: score=0 valid=false exact_once=0/12376 uncovered=12376 overcovered=0
+- Reasoning advances:
+  - Build a reusable knowledge cache for unknown large Steiner systems.
+  - Keep strict admissibility as a hard gate.
+  - Define when to use symmetry/exact-cover vs nibble/absorption engines.
+  - Add new references only if practice logs expose a gap not already covered in global research log.
+
+### run_20260221_143722 / round_0001
+- Metrics: score=0 valid=false exact_once=0/12376 uncovered=12376 overcovered=0
+- Reasoning advances:
+  - Build a reusable knowledge cache for unknown large Steiner systems.
+  - Keep strict admissibility as a hard gate.
+  - Define when to use symmetry/exact-cover vs nibble/absorption engines.
+  - Add new references only if practice logs expose a gap not already covered in global research log.
+
+### run_20260221_143916 / round_0001
+- Metrics: score=0 valid=false exact_once=0/12376 uncovered=12376 overcovered=0
+- Reasoning advances:
+  - Build a reusable knowledge cache for unknown large Steiner systems.
+  - Keep strict admissibility as a hard gate.
+  - Define when to use symmetry/exact-cover vs nibble/absorption engines.
+  - Add new references only if practice logs expose a gap not already covered in global research log.
+
+## URL Index (secondary)
+- intentionally minimized

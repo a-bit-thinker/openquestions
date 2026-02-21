@@ -150,9 +150,11 @@ The loop also generates:
 - `RUN_LOG_DIR/REPO_WIDE_HISTORY.md`
 - `LOG_ROOT/RESEARCH_LOG.md` (repo-wide round1 knowledge aggregation)
 - `LOG_ROOT/PRACTICE_LOG.md` (repo-wide rounds2-5 trajectory aggregation)
+- `LOG_ROOT/PAPER_NOTES.md` (local PDF method notes extracted from `papers/*.pdf`)
 
 This scans all `steiner_logs/run_*`, records best-known metrics by instance across runs, and points to the latest available prior `round_0001_notes.md` and `round_0005_notes.md`.
-Each round prompt now requires reading `RESEARCH_LOG.md` and `PRACTICE_LOG.md` before new work.
+Each round prompt now requires reading `PAPER_NOTES.md`, `RESEARCH_LOG.md`, and `PRACTICE_LOG.md` before new work.
+Round1 is configured to be reasoning-first (proof skeleton + verification checkpoints) with a capped external-link budget.
 If either file exceeds `GLOBAL_LOG_MAX_BYTES` (default `50000`), the loop writes a compact summary view while preserving raw redundancy in `run_*/notes/`.
 
 When `STRICT_ROUND5_SYNTHESIS_GATE=1` (default), solve rounds `>=5` will **fail before close** unless the round notes contain this heading exactly:
