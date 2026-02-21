@@ -1,8 +1,8 @@
 # Global Practice Log (Rounds2-5)
 
-Generated (UTC): 2026-02-21T01:14:34.507924+00:00
+Generated (UTC): 2026-02-21T03:46:04.326579+00:00
 Log root: steiner_logs
-Current run dir: /root/openquestions/steiner_logs/run_20260221_011431
+Current run dir: /root/openquestions/steiner_logs/run_20260221_013905
 
 ## Intent
 - Aggregate solver behavior and metrics from rounds 2-5 across runs.
@@ -33,6 +33,10 @@ Current run dir: /root/openquestions/steiner_logs/run_20260221_011431
 | run_20260220_222441 | 2 | S(6,7,17) | 48.37 | false | 7812/12376 | 4564 | 0 |
 | run_20260220_222441 | 3 | S(7,8,18) | 39.26 | false | 18016/31824 | 13808 | 0 |
 | run_20260220_222441 | 4 | S(8,9,19) | 33.22 | false | 39528/75582 | 36054 | 0 |
+| run_20260221_013905 | 2 | S(6,7,17) | 48.37 | false | 7812/12376 | 4564 | 0 |
+| run_20260221_013905 | 3 | S(7,8,18) | 40.56 | false | 18312/31824 | 13512 | 0 |
+| run_20260221_013905 | 4 | S(8,9,19) | 33.25 | false | 39546/75582 | 36036 | 0 |
+| run_20260221_013905 | 5 | S(9,10,20) | 27.83 | false | 81380/167960 | 86580 | 0 |
 
 ## Round Highlights
 - run_20260219_030101/round_0002
@@ -153,3 +157,47 @@ Current run dir: /root/openquestions/steiner_logs/run_20260221_011431
   - next-hypothesis: `2252 -> 2253..2256` blocks,
   - next-hypothesis: uncovered reduction by `8..32`,
   - next-hypothesis: keep `overcovered=0`, `oversubscribed_(r-1)=0`, `r_minus_1_max_degree <= 6`.
+- run_20260221_013905/round_0002
+  - advance: Established a reproducible strict-feasible balance-improvement lane for `S(6,7,17)` that improves structural pressure metrics even when block-count augmentations are absent.
+  - advance: Executed mandatory symmetry-first gate with explicit orbit/coefficient diagnostics and bounded probes before fallback.
+  - advance: Ran three augmentation-focused stages (`C1..C3`) totaling `>85k` neighborhood/augmentation attempts without strict block-count gain.
+  - advance: Found a strict-feasible improved certificate with unchanged coverage metrics but better balance:
+  - advance: point-degree spread `24 -> 19` (`445..469 -> 449..468`),
+  - next-hypothesis: Two-phase strict-feasible search (`balance-first neutral repack -> motif-coupled exact augment`) will break the `1116` plateau where augment-only scans fail.
+  - next-hypothesis: Reducing point-degree and cap-tail concentration relaxes local `(r-1)` bottlenecks, increasing the chance that `k -> k+1` exact micro-packs become feasible in the same motif neighborhoods.
+  - next-hypothesis: improve `1116 -> 1118..1122` blocks,
+  - next-hypothesis: reduce uncovered by `14..42`,
+  - next-hypothesis: keep `overcovered=0`, `oversubscribed_(r-1)=0`, `r_minus_1_max_degree <= 6`,
+- run_20260221_013905/round_0003
+  - advance: Built a reproducible strict-feasible augment loop for `S(7,8,18)` that combines a bounded symmetry gate with motif-coupled `1->2` and reserve-aware `2->3` LNS repacks, yielding monotone verifier gains.
+  - advance: Symmetry lane was executed first and rejected with explicit `C18/D18` orbit/coefficient diagnostics plus bounded DFS outcomes.
+  - advance: Candidate improved `2252 -> 2289` blocks (`+37`) with strict invariants preserved.
+  - advance: Verifier moved `score 39.26 -> 40.56`, `exact_once 18016 -> 18312`, `uncovered 13808 -> 13512`, `overcovered 0 -> 0`.
+  - advance: Structural pressure also improved (`point_degree_gap 135 -> 125`).
+  - next-hypothesis: Alternating motif-coupled `2->3` and small-window `3->4` exact local repacks (with canonical motif dedup) will extend strict gains beyond `2289`.
+  - next-hypothesis: After `1->2` saturation, remaining improvements likely require releasing larger transient slack around the same saturated 6-subset clusters; `3->4` windows can exploit combinations that pairwise scans cannot see.
+  - next-hypothesis: Improve `2289 -> 2293..2301` blocks,
+  - next-hypothesis: reduce uncovered by `32..96`,
+  - next-hypothesis: keep `overcovered=0`, `oversubscribed_(r-1)=0`, and `r_minus_1_max_degree <= 6`.
+- run_20260221_013905/round_0004
+  - advance: Broke the `S(8,9,19)` strict-feasible `4392` plateau with a symmetry-gated, motif-coupled `1->2` exact-repair lane while preserving all hard verifier invariants.
+  - advance: Mandatory symmetry gate was executed first, including a fresh cyclic orbit re-probe and bounded DFS before fallback.
+  - advance: Candidate improved `4392 -> 4394` (`+2`) with strict invariants intact.
+  - advance: Verifier moved:
+  - advance: `score 33.22 -> 33.25`,
+  - next-hypothesis: Two-step coupled `1->2` chains around the same saturated 7-subset cluster, with short motif-taboo and canonical neighborhood dedup, will outperform uncoupled single-neighborhood scans from `4394`.
+  - next-hypothesis: Successful `1->2` moves appear as sparse events; immediately reusing the same loosened motif neighborhood should exploit transient slack before cap pressure re-hardens.
+  - next-hypothesis: improve `4394 -> 4397..4406` blocks,
+  - next-hypothesis: reduce uncovered by `27..108`,
+  - next-hypothesis: keep `overcovered=0`, `oversubscribed_(r-1)=0`, `r_minus_1_max_degree <= 6`.
+- run_20260221_013905/round_0005
+  - advance: Established a practical strict-feasible `r=9` plateau-breaker for this run by combining a mandatory symmetry front gate with fast exact `1->2` micro-augment repairs after add-only exhaustion.
+  - advance: Stage A symmetry was gated first and rejected using cached deterministic `C20/D20` diagnostics.
+  - advance: Stage B add-only strict pass produced `0` gains.
+  - advance: Stage C micro-augment lane produced `+18` strict blocks (`8120 -> 8138`) with verifier movement `score 27.68 -> 27.83`, `exact_once 81200 -> 81380`, `uncovered 86760 -> 86580`.
+  - advance: Feasibility invariants remained strict: `overcovered=0`, `oversubscribed_(r-1)=0`.
+  - next-hypothesis: Coupled `1->2 -> 1->2` chains on the same saturated 8-subset motif, with short motif-taboo and canonical neighborhood dedup, will outperform uncoupled random motif selection from `8138`.
+  - next-hypothesis: Successful first augmentations indicate transient slack near the released motif. Reusing that motif before pressure re-hardens should increase second-step augment probability.
+  - next-hypothesis: Improve `8138 -> 8155..8195` blocks,
+  - next-hypothesis: reduce uncovered by `170..570`,
+  - next-hypothesis: keep `overcovered=0`, `oversubscribed_(r-1)=0`, and `r_minus_1_max_degree <= 6`.
