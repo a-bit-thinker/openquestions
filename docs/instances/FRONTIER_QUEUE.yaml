@@ -1,0 +1,22 @@
+version: 1
+updated_utc: "2026-02-22T00:00:00Z"
+queue:
+  - rank: 1
+    instance: "S(6,7,23)"
+    reason: "smallest unknown admissible q=r+1 candidate after provisional derivation veto"
+    route_hint: "symmetry_optional_exact_cover"
+
+  - rank: 2
+    instance: "S(7,8,24)"
+    reason: "next smallest unknown admissible q=r+1 candidate"
+    route_hint: "bounded_km_then_exact_cover"
+
+  - rank: 3
+    instance: "S(8,9,25)"
+    reason: "higher incidence; orbit compression strongly recommended"
+    route_hint: "orbit_first_then_sat_ilp"
+
+  - rank: 4
+    instance: "S(9,10,26)"
+    reason: "largest first-wave q=r+1 candidate"
+    route_hint: "orbit_required_then_sat_ilp"

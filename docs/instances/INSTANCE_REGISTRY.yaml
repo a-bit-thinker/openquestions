@@ -1,0 +1,74 @@
+version: 1
+updated_utc: "2026-02-22T00:00:00Z"
+registry:
+  - instance: "S(6,7,17)"
+    status: provisional_nonexistence_veto
+    basis: "Derived from provisional base N002"
+    admissible: true
+    expected_blocks: 1768
+
+  - instance: "S(6,7,19)"
+    status: provisional_nonexistence_veto
+    basis: "Derived from provisional base N001"
+    admissible: true
+    expected_blocks: 3876
+
+  - instance: "S(7,8,18)"
+    status: provisional_nonexistence_veto
+    basis: "Derived from provisional base N002"
+    admissible: true
+    expected_blocks: 3978
+
+  - instance: "S(7,8,20)"
+    status: provisional_nonexistence_veto
+    basis: "Derived from provisional base N001"
+    admissible: true
+    expected_blocks: 9690
+
+  - instance: "S(8,9,19)"
+    status: provisional_nonexistence_veto
+    basis: "Derived from provisional base N002"
+    admissible: true
+    expected_blocks: 8398
+
+  - instance: "S(8,9,21)"
+    status: provisional_nonexistence_veto
+    basis: "Derived from provisional base N001"
+    admissible: true
+    expected_blocks: 22610
+
+  - instance: "S(9,10,20)"
+    status: provisional_nonexistence_veto
+    basis: "Derived from provisional base N002"
+    admissible: true
+    expected_blocks: 16796
+
+  - instance: "S(9,10,22)"
+    status: provisional_nonexistence_veto
+    basis: "Derived from provisional base N001"
+    admissible: true
+    expected_blocks: 49742
+
+  - instance: "S(6,7,23)"
+    status: unknown_admissible_frontier
+    basis: "Smallest q=r+1 not covered by provisional veto set"
+    admissible: true
+    expected_blocks: 14421
+
+  - instance: "S(7,8,24)"
+    status: unknown_admissible_frontier
+    basis: "Smallest q=r+1 not covered by provisional veto set"
+    admissible: true
+    expected_blocks: 43263
+
+  - instance: "S(8,9,25)"
+    status: unknown_admissible_frontier
+    basis: "Smallest q=r+1 not covered by provisional veto set"
+    admissible: true
+    expected_blocks: 120175
+
+  - instance: "S(9,10,26)"
+    status: unknown_admissible_frontier
+    basis: "Smallest q=r+1 not covered by provisional veto set"
+    admissible: true
+    expected_blocks: 312455

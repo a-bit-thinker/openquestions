@@ -1,0 +1,113 @@
+version: 1
+updated_utc: "2026-02-22T00:00:00Z"
+entries:
+  - source_id: arxiv_1401_3665
+    source_label: "arxiv_1401.3665"
+    local_pdf: "papers/arxiv_1401.3665.pdf"
+    trust_label: secondary_reported
+    theorem_or_mechanism: "Theorem mechanism: randomized template, spill repair, robust fractional extendability, absorber closure."
+    mechanism_keywords:
+      - template
+      - spill
+      - robust fractional
+      - extendability
+      - absorber
+    code_delta:
+      - file: "math_proofs/steiner_exact_cover.py"
+        action: update
+        detail: "Add template->spill->repair stage hooks and spill counters."
+      - file: "steiner_logs/RESEARCH_PAPER.md"
+        action: update
+        detail: "Track spill size and local-fix success metrics."
+    validation_metrics:
+      - uncovered_slope
+      - spill_size
+      - local_fix_success_rate
+    status: draft
+    evidence_refs:
+      - "steiner_logs/RESEARCH_PAPER.md"
+      - "steiner_logs/run_20260222_110632/notes/round_0001_notes.md"
+
+  - source_id: arxiv_1611_06827
+    source_label: "arxiv_1611.06827"
+    local_pdf: "papers/arxiv_1611.06827.pdf"
+    trust_label: secondary_reported
+    theorem_or_mechanism: "Workflow mechanism: iterative absorption with vortex levels, cover down, transformer/absorber transitions."
+    mechanism_keywords:
+      - vortex
+      - cover down
+      - transformer
+      - absorber
+      - regularity boosting
+    code_delta:
+      - file: "run_steiner_loop.sh"
+        action: update
+        detail: "Add vortex-stage routing and level gates."
+      - file: "math_proofs/steiner_residual_repair.py"
+        action: modify
+        detail: "Add cover-down micro-solver and absorber reserve policy."
+    validation_metrics:
+      - leftover_mass_per_level
+      - cover_down_hit_rate
+      - strict_violations
+    status: draft
+    evidence_refs:
+      - "steiner_logs/RESEARCH_PAPER.md"
+      - "steiner_logs/run_20260222_110632/notes/round_0001_notes.md"
+
+  - source_id: oai_first_proof
+    source_label: "oai_first_proof.pdf"
+    local_pdf: "papers/oai_first_proof.pdf"
+    trust_label: local_workflow
+    theorem_or_mechanism: "Protocol mechanism: seed ideas fanout, up to 3 verify loops, gap checks, refinement, typeset-ready closure."
+    mechanism_keywords:
+      - seed ideas
+      - repeat up to 3
+      - verify
+      - gaps
+      - refinement
+      - typeset
+    code_delta:
+      - file: "run_steiner_loop.sh"
+        action: enforce
+        detail: "Enforce 5-seed round1 fanout and <=3 verification loops."
+      - file: "math_proofs/steiner_round_logger.py"
+        action: update
+        detail: "Log verification checklist and gap closure outcomes."
+    validation_metrics:
+      - seed_count
+      - verification_pass_rate
+      - duplicate_hypothesis_reduction
+    status: draft
+    evidence_refs:
+      - "steiner_logs/RESEARCH_PAPER.md"
+      - "papers/_extracted_text/oai_first_proof.pdftotext.txt"
+
+  - source_id: roadmap_n_lt_200
+    source_label: "Steiner roadmap PDF"
+    local_pdf: "papers/Computational and Theoretical Roadmap for Steiner Systems with Strength 6–9 and n _ 200.pdf"
+    trust_label: secondary_reported
+    theorem_or_mechanism: "Workflow mechanism: derivation-veto propagation, Kramer orbit reduction, SAT/ILP/DLX routing by incidence scale."
+    mechanism_keywords:
+      - derivation
+      - nonexistence
+      - kramer
+      - orbit reduction
+      - sat
+      - ilp
+      - dlx
+    code_delta:
+      - file: "math_proofs/steiner_portfolio.py"
+        action: update
+        detail: "Apply derivation-veto filter before scheduling instances."
+      - file: "math_proofs/steiner_exact_cover.py"
+        action: update
+        detail: "Route by orbit compression diagnostics before raw exact-cover builds."
+    validation_metrics:
+      - candidates_vetoed
+      - orbit_compression_ratio
+      - runtime_variance
+    status: draft
+    evidence_refs:
+      - "steiner_logs/RESEARCH_PAPER.md"
+      - "steiner_logs/run_20260222_110632/notes/round_0001_notes.md"

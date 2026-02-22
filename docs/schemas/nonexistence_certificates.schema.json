@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "docs/schemas/nonexistence_certificates.schema.json",
+  "type": "object",
+  "required": ["version", "certificates"],
+  "properties": {
+    "version": {"type": "integer", "minimum": 1},
+    "updated_utc": {"type": "string"},
+    "certificates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["certificate_id", "base_instance", "status", "source_refs", "propagation_rule"],
+        "properties": {
+          "certificate_id": {"type": "string"},
+          "base_instance": {"type": "string"},
+          "status": {"type": "string", "enum": ["provisional", "verified", "retracted"]},
+          "source_type": {"type": "string", "enum": ["primary_verified", "secondary_reported"]},
+          "source_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+          "propagation_rule": {"type": "string", "minLength": 10},
+          "derived_veto_examples": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

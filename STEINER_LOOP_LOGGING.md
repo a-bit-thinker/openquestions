@@ -160,3 +160,29 @@ If either file exceeds `GLOBAL_LOG_MAX_BYTES` (default `50000`), the loop writes
 When `STRICT_ROUND5_SYNTHESIS_GATE=1` (default), solve rounds `>=5` will **fail before close** unless the round notes contain this heading exactly:
 
 `## Rounds 1-5 Synthesis`
+
+## 10) Phase B/C/D runtime hooks
+
+The loop now includes explicit runtime hooks after Phase A setup:
+
+- Phase B (`ENABLE_DOCS_DUAL_WRITE=1`): write structured deltas to `docs/generated/`.
+- Phase C (`ENABLE_REVIEW_RECONCILE=1`): reconcile target instance before solve and auto-replace if registry marks it vetoed/proved-nonexistence.
+- Phase D (`ENABLE_REVIEW_RECONCILE=1`): run skeptic+verifier agent review and write:
+  - `docs/generated/runs/run_*/round_*/AGENT_REVIEW.json`
+  - `docs/generated/runs/run_*/round_*/AGENT_REVIEW.md`
+
+By default the agent review is non-blocking (`STRICT_AGENT_REVIEW_GATE=0`), so findings drive replacement/remediation instead of immediate shutdown.
+
+## 11) Explicit code-change audit (jsonl + markdown)
+
+When `ENABLE_CODE_CHANGE_AUDIT=1` (default), each round writes:
+
+- Run-level append logs:
+  - `RUN_LOG_DIR/CODE_CHANGE_AUDIT.jsonl`
+  - `RUN_LOG_DIR/CODE_CHANGE_AUDIT.md`
+- Round-level snapshots/artifact:
+  - `RUN_LOG_DIR/rounds/<round_id>/CODE_SNAPSHOT_BEFORE.json`
+  - `RUN_LOG_DIR/rounds/<round_id>/CODE_SNAPSHOT_AFTER.json`
+  - `RUN_LOG_DIR/rounds/<round_id>/CODE_CHANGE_AUDIT.json`
+
+This is designed to make repository edits traceable from an empty context window.

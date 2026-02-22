@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "docs/schemas/source_transfer.schema.json",
+  "type": "object",
+  "required": ["version", "entries"],
+  "properties": {
+    "version": {"type": "integer", "minimum": 1},
+    "updated_utc": {"type": "string"},
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["source_id", "theorem_or_mechanism", "code_delta", "validation_metrics", "status"],
+        "properties": {
+          "source_id": {"type": "string", "minLength": 1},
+          "source_label": {"type": "string"},
+          "local_pdf": {"type": "string"},
+          "trust_label": {"type": "string", "enum": ["primary_verified", "secondary_reported", "local_workflow"]},
+          "theorem_or_mechanism": {"type": "string", "minLength": 20},
+          "mechanism_keywords": {"type": "array", "items": {"type": "string"}},
+          "code_delta": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["file", "action", "detail"],
+              "properties": {
+                "file": {"type": "string", "minLength": 1},
+                "action": {"type": "string", "enum": ["add", "update", "modify", "enforce", "route", "replace", "refactor"]},
+                "detail": {"type": "string", "minLength": 10}
+              },
+              "additionalProperties": false
+            }
+          },
+          "validation_metrics": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+          "status": {"type": "string", "enum": ["draft", "active", "retired"]},
+          "evidence_refs": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

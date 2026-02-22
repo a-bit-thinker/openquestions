@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "docs/schemas/frontier_queue.schema.json",
+  "type": "object",
+  "required": ["version", "queue"],
+  "properties": {
+    "version": {"type": "integer", "minimum": 1},
+    "updated_utc": {"type": "string"},
+    "queue": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["rank", "instance", "reason"],
+        "properties": {
+          "rank": {"type": "integer", "minimum": 1},
+          "instance": {"type": "string"},
+          "reason": {"type": "string", "minLength": 5},
+          "route_hint": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

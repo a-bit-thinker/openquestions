@@ -1,0 +1,30 @@
+version: 1
+updated_utc: "2026-02-22T00:00:00Z"
+certificates:
+  - certificate_id: N001
+    base_instance: "S(4,5,17)"
+    status: provisional
+    source_type: secondary_reported
+    source_refs:
+      - "steiner_logs/RESEARCH_PAPER.md"
+      - "papers/Computational and Theoretical Roadmap for Steiner Systems with Strength 6–9 and n _ 200.pdf"
+    propagation_rule: "If verified, veto family S(t,t+1,t+13) for t>=4 by repeated derivation."
+    derived_veto_examples:
+      - "S(6,7,19)"
+      - "S(7,8,20)"
+      - "S(8,9,21)"
+      - "S(9,10,22)"
+
+  - certificate_id: N002
+    base_instance: "S(5,6,16)"
+    status: provisional
+    source_type: secondary_reported
+    source_refs:
+      - "steiner_logs/RESEARCH_PAPER.md"
+      - "papers/Computational and Theoretical Roadmap for Steiner Systems with Strength 6–9 and n _ 200.pdf"
+    propagation_rule: "If verified, veto family S(t,t+1,t+11) for t>=5 by repeated derivation."
+    derived_veto_examples:
+      - "S(6,7,17)"
+      - "S(7,8,18)"
+      - "S(8,9,19)"
+      - "S(9,10,20)"

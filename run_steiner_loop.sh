@@ -39,6 +39,12 @@ PAPERS_DIR="${PAPERS_DIR:-$PWD/papers}"
 LOCAL_PAPER_NOTES_FILE="${LOCAL_PAPER_NOTES_FILE:-$LOG_ROOT/PAPER_NOTES.md}"
 ROUND1_IDEA_COUNT="${ROUND1_IDEA_COUNT:-5}"
 ROUND_VERIFY_MAX_LOOPS="${ROUND_VERIFY_MAX_LOOPS:-3}"
+DOCS_ROOT="${DOCS_ROOT:-$PWD/docs}"
+RESEARCH_PAPER_FILE="${RESEARCH_PAPER_FILE:-$LOG_ROOT/RESEARCH_PAPER.md}"
+ENABLE_DOCS_DUAL_WRITE="${ENABLE_DOCS_DUAL_WRITE:-1}"
+ENABLE_REVIEW_RECONCILE="${ENABLE_REVIEW_RECONCILE:-1}"
+STRICT_AGENT_REVIEW_GATE="${STRICT_AGENT_REVIEW_GATE:-0}"
+ENABLE_CODE_CHANGE_AUDIT="${ENABLE_CODE_CHANGE_AUDIT:-1}"
 
 cd "$(dirname "$0")"
 
@@ -107,6 +113,26 @@ if ! [[ "$ROUND_VERIFY_MAX_LOOPS" =~ ^[0-9]+$ ]] || (( ROUND_VERIFY_MAX_LOOPS < 
   exit 1
 fi
 
+if [[ "$ENABLE_DOCS_DUAL_WRITE" != "0" && "$ENABLE_DOCS_DUAL_WRITE" != "1" ]]; then
+  echo "ENABLE_DOCS_DUAL_WRITE must be 0 or 1"
+  exit 1
+fi
+
+if [[ "$ENABLE_REVIEW_RECONCILE" != "0" && "$ENABLE_REVIEW_RECONCILE" != "1" ]]; then
+  echo "ENABLE_REVIEW_RECONCILE must be 0 or 1"
+  exit 1
+fi
+
+if [[ "$STRICT_AGENT_REVIEW_GATE" != "0" && "$STRICT_AGENT_REVIEW_GATE" != "1" ]]; then
+  echo "STRICT_AGENT_REVIEW_GATE must be 0 or 1"
+  exit 1
+fi
+
+if [[ "$ENABLE_CODE_CHANGE_AUDIT" != "0" && "$ENABLE_CODE_CHANGE_AUDIT" != "1" ]]; then
+  echo "ENABLE_CODE_CHANGE_AUDIT must be 0 or 1"
+  exit 1
+fi
+
 if [[ "$STRICT_ROUND5_SYNTHESIS_GATE" != "0" && "$STRICT_ROUND5_SYNTHESIS_GATE" != "1" ]]; then
   echo "STRICT_ROUND5_SYNTHESIS_GATE must be 0 or 1"
   exit 1
@@ -146,6 +172,8 @@ KNOWLEDGE_CACHE_FILE="$RUN_LOG_DIR/KNOWLEDGE_CACHE.md"
 RUN_SUMMARY_FILE="$RUN_LOG_DIR/RUN_SUMMARY.md"
 TRANSFER_FILE="$RUN_LOG_DIR/NEXT_GENERATION_TRANSFER.md"
 REPO_HISTORY_FILE="$RUN_LOG_DIR/REPO_WIDE_HISTORY.md"
+CODE_CHANGE_AUDIT_JSONL="$RUN_LOG_DIR/CODE_CHANGE_AUDIT.jsonl"
+CODE_CHANGE_AUDIT_MD="$RUN_LOG_DIR/CODE_CHANGE_AUDIT.md"
 
 mkdir -p "$RUN_LOG_DIR" "$CANDIDATE_DIR" "$NOTES_DIR"
 mkdir -p "$(dirname "$GLOBAL_RESEARCH_LOG_FILE")" "$(dirname "$GLOBAL_PRACTICE_LOG_FILE")"
@@ -185,6 +213,17 @@ Run directory: $RUN_LOG_DIR
 
 No rounds summarized yet.
 EOF_TRANSFER
+fi
+
+if [[ "$ENABLE_CODE_CHANGE_AUDIT" == "1" && ! -f "$CODE_CHANGE_AUDIT_MD" ]]; then
+  cat > "$CODE_CHANGE_AUDIT_MD" <<EOF_AUDIT
+# Code Change Audit
+
+Run ID: $RUN_ID
+Started (UTC): $(date -u +%Y-%m-%dT%H:%M:%SZ)
+Repo: $(pwd)
+
+EOF_AUDIT
 fi
 
 ensure_json_list_file() {
@@ -566,6 +605,7 @@ from __future__ import annotations
 
 import datetime as dt
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -603,7 +643,28 @@ if not pdf_paths:
     sys.exit(0)
 
 
-def extract_text(pdf_path: Path) -> str:
+def extract_text_with_pdftotext(pdf_path: Path) -> str:
+    if shutil.which("pdftotext") is None:
+        return ""
+    cmd = [
+        "pdftotext",
+        "-layout",
+        "-nopgbrk",
+        str(pdf_path),
+        "-",
+    ]
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True)
+    except FileNotFoundError:
+        return ""
+    if result.returncode != 0:
+        return ""
+    return result.stdout or ""
+
+
+def extract_text_with_ghostscript(pdf_path: Path) -> str:
+    if shutil.which("gs") is None:
+        return ""
     with tempfile.NamedTemporaryFile(prefix="paper_", suffix=".txt", delete=False) as tmp:
         txt_path = Path(tmp.name)
     try:
@@ -616,7 +677,10 @@ def extract_text(pdf_path: Path) -> str:
             f"-sOutputFile={txt_path}",
             str(pdf_path),
         ]
-        result = subprocess.run(cmd, capture_output=True, text=True)
+        try:
+            result = subprocess.run(cmd, capture_output=True, text=True)
+        except FileNotFoundError:
+            return ""
         if result.returncode != 0:
             return ""
         return txt_path.read_text(encoding="utf-8", errors="ignore")
@@ -625,6 +689,30 @@ def extract_text(pdf_path: Path) -> str:
             txt_path.unlink(missing_ok=True)
         except Exception:
             pass
+
+
+def extract_text_with_python_fallback(pdf_path: Path) -> str:
+    try:
+        from math_proofs.pdf_text_extract import extract_pdf_text
+    except Exception:
+        return ""
+    try:
+        return extract_pdf_text(pdf_path, max_lines=4000)
+    except Exception:
+        return ""
+
+
+def extract_text(pdf_path: Path) -> tuple[str, str]:
+    backends = [
+        ("pdftotext", extract_text_with_pdftotext),
+        ("ghostscript", extract_text_with_ghostscript),
+        ("python_fallback", extract_text_with_python_fallback),
+    ]
+    for name, fn in backends:
+        text = fn(pdf_path)
+        if text.strip():
+            return text, name
+    return "", "none"
 
 
 def first_nonempty_line(text: str) -> str:
@@ -659,13 +747,19 @@ def lines_by_keywords(text: str, keywords: list[str], max_lines: int = 12) -> li
 
 
 for pdf_path in pdf_paths:
-    text = extract_text(pdf_path)
+    text, backend = extract_text(pdf_path)
     if not text.strip():
-        lines.extend([f"## {pdf_path.name}", "- Text extraction failed (ghostscript txtwrite).", ""])
+        lines.extend(
+            [
+                f"## {pdf_path.name}",
+                "- Text extraction failed (tried pdftotext, ghostscript, python fallback).",
+                "",
+            ]
+        )
         continue
 
     title = first_nonempty_line(text) or pdf_path.stem
-    lines.extend([f"## {pdf_path.name}", f"- Parsed title hint: {title}"])
+    lines.extend([f"## {pdf_path.name}", f"- Parsed title hint: {title}", f"- Extractor backend: {backend}"])
 
     strategy_hits: list[str] = []
     if re.search(r"Generate a small number of seed ideas", text, flags=re.IGNORECASE):
@@ -1793,6 +1887,191 @@ print_solver_json_summary() {
   fi
 }
 
+capture_code_snapshot() {
+  local out_file="$1"
+  if [[ "$ENABLE_CODE_CHANGE_AUDIT" != "1" ]]; then
+    return 0
+  fi
+  local out
+  out="$(python3 -m math_proofs.code_change_audit snapshot \
+    --repo-root "$PWD" \
+    --output "$out_file" 2>&1)" || {
+    echo "Code-change audit snapshot failed: $out" >&2
+    return 1
+  }
+  if [[ -n "$out" ]]; then
+    echo "Code snapshot: $out"
+  fi
+  return 0
+}
+
+append_code_change_audit() {
+  local round="$1"
+  local round_id="$2"
+  local mode="$3"
+  local before_snapshot="$4"
+  if [[ "$ENABLE_CODE_CHANGE_AUDIT" != "1" ]]; then
+    return 0
+  fi
+  local round_dir="$RUN_LOG_DIR/rounds/$round_id"
+  local after_snapshot="$round_dir/CODE_SNAPSHOT_AFTER.json"
+  local event_json="$round_dir/CODE_CHANGE_AUDIT.json"
+  local out
+  out="$(python3 -m math_proofs.code_change_audit diff \
+    --before "$before_snapshot" \
+    --after-output "$after_snapshot" \
+    --repo-root "$PWD" \
+    --run-id "$RUN_ID" \
+    --round "$round" \
+    --round-id "$round_id" \
+    --mode "$mode" \
+    --jsonl-out "$CODE_CHANGE_AUDIT_JSONL" \
+    --md-out "$CODE_CHANGE_AUDIT_MD" \
+    --event-json-out "$event_json" 2>&1)" || {
+    echo "Code-change audit diff failed for $round_id: $out" >&2
+    return 1
+  }
+
+  if jq -e . >/dev/null 2>&1 <<<"$out"; then
+    local change_count jsonl_path md_path
+    change_count="$(jq -r '.change_count // 0' <<<"$out")"
+    jsonl_path="$(jq -r '.jsonl_out // ""' <<<"$out")"
+    md_path="$(jq -r '.md_out // ""' <<<"$out")"
+    echo "Code-change audit recorded for $round_id: changes=$change_count jsonl=$jsonl_path md=$md_path"
+  else
+    echo "Code-change audit output (non-JSON): $out"
+  fi
+  return 0
+}
+
+phase_b_docs_dual_write() {
+  local round="$1"
+  local round_id="$2"
+  local mode="$3"
+  local instance_label="$4"
+  local instance_json="$5"
+  local round_metrics_json="$6"
+  local notes_file="$7"
+  shift 7
+  local -a techniques=("$@")
+  if [[ "$ENABLE_DOCS_DUAL_WRITE" != "1" ]]; then
+    return 0
+  fi
+
+  local -a cmd=(
+    python3 -m math_proofs.docs_dual_write round
+    --docs-root "$DOCS_ROOT"
+    --run-id "$RUN_ID"
+    --run-log-dir "$RUN_LOG_DIR"
+    --round "$round"
+    --round-id "$round_id"
+    --mode "$mode"
+    --instance-label "$instance_label"
+    --instance-json "$instance_json"
+    --round-metrics-json "$round_metrics_json"
+    --notes-file "$notes_file"
+  )
+  local tech
+  for tech in "${techniques[@]}"; do
+    cmd+=(--technique "$tech")
+  done
+
+  local out
+  out="$("${cmd[@]}" 2>&1)" || {
+    echo "Phase B docs dual-write failed (round=$round_id): $out" >&2
+    return 1
+  }
+  echo "Docs dual-write: $out"
+  return 0
+}
+
+phase_d_agent_review() {
+  local round="$1"
+  local round_id="$2"
+  local mode="$3"
+  local notes_file="$4"
+  if [[ "$ENABLE_REVIEW_RECONCILE" != "1" ]]; then
+    return 0
+  fi
+
+  local out
+  out="$(python3 -m math_proofs.agent_review review-round \
+    --docs-root "$DOCS_ROOT" \
+    --run-id "$RUN_ID" \
+    --round "$round" \
+    --round-id "$round_id" \
+    --mode "$mode" \
+    --notes-file "$notes_file" \
+    --research-paper-file "$RESEARCH_PAPER_FILE" \
+    --papers-dir "$PAPERS_DIR" 2>&1)" || {
+    echo "Phase D agent review execution failed for $round_id: $out" >&2
+    return 1
+  }
+
+  if jq -e . >/dev/null 2>&1 <<<"$out"; then
+    local passed skeptic_findings verifier_findings
+    passed="$(jq -r '.passed // false' <<<"$out")"
+    skeptic_findings="$(jq -r '.reviewers.skeptic.finding_count // 0' <<<"$out")"
+    verifier_findings="$(jq -r '.reviewers.verifier.finding_count // 0' <<<"$out")"
+    echo "Phase D agent review: passed=$passed skeptic_findings=$skeptic_findings verifier_findings=$verifier_findings"
+
+    if [[ "$passed" != "true" && "$STRICT_AGENT_REVIEW_GATE" == "1" ]]; then
+      echo "Agent review strict gate failed for round $round_id." >&2
+      return 1
+    fi
+    if [[ "$passed" != "true" ]]; then
+      echo "Agent review flagged issues for round $round_id; continuing (non-blocking)." >&2
+    fi
+  else
+    echo "Phase D agent review output (non-JSON): $out" >&2
+  fi
+  return 0
+}
+
+phase_c_reconcile_instance() {
+  local round="$1"
+  local mode="$2"
+  local instance_json="$3"
+  if [[ "$ENABLE_REVIEW_RECONCILE" != "1" ]]; then
+    echo "$instance_json"
+    return 0
+  fi
+
+  local out
+  out="$(python3 -m math_proofs.review_reconcile reconcile \
+    --docs-root "$DOCS_ROOT" \
+    --instance-json "$instance_json" \
+    --mode "$mode" \
+    --run-id "$RUN_ID" \
+    --round "$round" \
+    --run-log-dir "$RUN_LOG_DIR" 2>&1)" || {
+    echo "Phase C reconcile execution failed (round=$round): $out" >&2
+    echo "$instance_json"
+    return 0
+  }
+
+  if ! jq -e . >/dev/null 2>&1 <<<"$out"; then
+    echo "Phase C reconcile output (non-JSON): $out" >&2
+    echo "$instance_json"
+    return 0
+  fi
+
+  local action summary replacement
+  action="$(jq -r '.decision.action // "keep"' <<<"$out")"
+  summary="$(jq -r '.decision.summary // ""' <<<"$out")"
+  echo "Phase C review-reconcile: action=$action summary=$summary" >&2
+
+  if [[ "$action" == "replace" ]]; then
+    replacement="$(jq -c '.decision.replacement_instance // empty' <<<"$out")"
+    if [[ -n "$replacement" && "$replacement" != "null" ]]; then
+      echo "$replacement"
+      return 0
+    fi
+  fi
+
+  echo "$instance_json"
+}
+
 generate_transfer_file() {
   python3 - "$RUN_LOG_DIR" "$RUN_SUMMARY_FILE" "$NOTES_DIR" "$TRANSFER_FILE" <<'PY'
 from __future__ import annotations
@@ -2116,7 +2395,13 @@ echo "Low-time summary threshold (sec): $LOW_TIME_SUMMARY_THRESHOLD_SEC"
 echo "Global log max bytes per file: $GLOBAL_LOG_MAX_BYTES"
 echo "Round1 external-link budget: min=$MIN_RESEARCH_REFERENCES max=$MAX_ROUND1_NEW_LINKS"
 echo "Local papers dir: $PAPERS_DIR"
+echo "Docs root: $DOCS_ROOT"
+echo "Research paper path: $RESEARCH_PAPER_FILE"
 echo "Strict round-5 synthesis gate: $STRICT_ROUND5_SYNTHESIS_GATE"
+echo "Phase B docs dual-write: $ENABLE_DOCS_DUAL_WRITE"
+echo "Phase C reconcile-before-solve: $ENABLE_REVIEW_RECONCILE"
+echo "Phase D agent review strict gate: $STRICT_AGENT_REVIEW_GATE"
+echo "Code-change audit enabled: $ENABLE_CODE_CHANGE_AUDIT"
 echo "Repo-wide history file: $HISTORY_PATH"
 echo "Global research log: $GLOBAL_RESEARCH_LOG_PATH"
 echo "Global practice log: $GLOBAL_PRACTICE_LOG_PATH"
@@ -2229,6 +2514,8 @@ EOF_NOTES
     --hypothesis "Collect references and derivable tactics before construction")"
   echo "$start_out"
   round_id="$(tail -n1 <<<"$start_out" | tr -d '\r')"
+  round_code_snapshot_before="$RUN_LOG_DIR/rounds/$round_id/CODE_SNAPSHOT_BEFORE.json"
+  capture_code_snapshot "$round_code_snapshot_before" || true
 
   cache_excerpt="$(sed -n '1,220p' "$KNOWLEDGE_CACHE_FILE")"
   research_prompt=$(cat <<EOF_PROMPT
@@ -2348,6 +2635,11 @@ EOF_PROMPT
   echo "$close_json"
 
   round_json="$(evaluate_candidate_json "$instance_json" "$candidate_file")"
+  round_json_compact="$(jq -c '.' <<<"$round_json")"
+  round_techniques=("research-cache")
+  phase_b_docs_dual_write "$round" "$round_id" "research" "$instance_label" "$instance_json" \
+    "$round_json_compact" "$notes_file" "${round_techniques[@]}" || true
+  phase_d_agent_review "$round" "$round_id" "research" "$notes_file" || true
   score="$(jq -r '.score // 0' <<<"$round_json")"
   valid="$(jq -r '.is_valid' <<<"$round_json")"
   exact_once="$(jq -r '(.exact_once_r_subsets|tostring) + "/" + (.total_required_r_subsets|tostring)' <<<"$round_json")"
@@ -2359,6 +2651,7 @@ EOF_PROMPT
   refresh_cross_run_context
   echo "Updated repo-wide history: $HISTORY_PATH"
   echo "Updated global research/practice logs: $GLOBAL_RESEARCH_LOG_PATH (${GLOBAL_RESEARCH_LOG_BYTES}B, compacted=$GLOBAL_RESEARCH_LOG_COMPACTED) , $GLOBAL_PRACTICE_LOG_PATH (${GLOBAL_PRACTICE_LOG_BYTES}B, compacted=$GLOBAL_PRACTICE_LOG_COMPACTED)"
+  append_code_change_audit "$round" "$round_id" "research" "$round_code_snapshot_before" || true
 
   echo "Research round target instance: $instance_label expected_blocks=$expected_blocks"
 }
@@ -2371,6 +2664,7 @@ if (( ROUNDS >= 2 )); then
     r_value="${TARGET_R_ARRAY[$idx]}"
 
     instance_json="$(resolve_instance_for_r "$r_value")"
+    instance_json="$(phase_c_reconcile_instance "$round" "solve" "$instance_json")"
     admissibility_json="$(admissibility_report_json "$instance_json")"
     n="$(jq -r '.n' <<<"$instance_json")"
     q="$(jq -r '.q' <<<"$instance_json")"
@@ -2474,6 +2768,8 @@ EOF_NOTES
       --hypothesis "Use cached knowledge first; minimal repeated search")"
     echo "$start_out"
     round_id="$(tail -n1 <<<"$start_out" | tr -d '\r')"
+    round_code_snapshot_before="$RUN_LOG_DIR/rounds/$round_id/CODE_SNAPSHOT_BEFORE.json"
+    capture_code_snapshot "$round_code_snapshot_before" || true
 
     exact_backbone_status=""
     exact_backbone_engine=""
@@ -2721,13 +3017,17 @@ EOF_PROMPT
       exit 1
     fi
 
-    close_technique_args=(--technique "solve-r${r}-round-${round}")
+    round_techniques=("solve-r${r}-round-${round}")
     if [[ "$exact_backbone_used" == "1" ]]; then
-      close_technique_args+=(--technique "exact-backbone-${exact_backbone_engine:-none}-${exact_backbone_status:-unknown}")
+      round_techniques+=("exact-backbone-${exact_backbone_engine:-none}-${exact_backbone_status:-unknown}")
     fi
     if [[ "$residual_repair_status" == "solved" ]]; then
-      close_technique_args+=(--technique "residual-exact-cover")
+      round_techniques+=("residual-exact-cover")
     fi
+    close_technique_args=()
+    for technique in "${round_techniques[@]}"; do
+      close_technique_args+=(--technique "$technique")
+    done
 
     close_json=""
     if close_json="$(./run_steiner_round.sh --log-dir "$RUN_LOG_DIR" close \
@@ -2750,6 +3050,10 @@ EOF_PROMPT
 
     round_out="$(evaluate_candidate "$instance_json" "$candidate_file")"
     round_json="$(evaluate_candidate_json "$instance_json" "$candidate_file")"
+    round_json_compact="$(jq -c '.' <<<"$round_json")"
+    phase_b_docs_dual_write "$round" "$round_id" "solve" "$instance_label" "$instance_json" \
+      "$round_json_compact" "$notes_file" "${round_techniques[@]}" || true
+    phase_d_agent_review "$round" "$round_id" "solve" "$notes_file" || true
     round_score="$(jq -r '.score // 0' <<<"$round_json")"
 
     better="$(is_report_better "$round_json" "$best_json")"
@@ -2773,6 +3077,7 @@ EOF_PROMPT
     refresh_cross_run_context
     echo "Updated repo-wide history: $HISTORY_PATH"
     echo "Updated global research/practice logs: $GLOBAL_RESEARCH_LOG_PATH (${GLOBAL_RESEARCH_LOG_BYTES}B, compacted=$GLOBAL_RESEARCH_LOG_COMPACTED) , $GLOBAL_PRACTICE_LOG_PATH (${GLOBAL_PRACTICE_LOG_BYTES}B, compacted=$GLOBAL_PRACTICE_LOG_COMPACTED)"
+    append_code_change_audit "$round" "$round_id" "solve" "$round_code_snapshot_before" || true
 
     if [[ -f "$RUN_LOG_DIR/rounds/NEXT_ROUND_BRIEF.md" ]]; then
       echo "--- Next-round brief (top) ---"
@@ -2792,3 +3097,7 @@ echo "Unique logs: $RUN_LOG_DIR"
 echo "Knowledge cache: $KNOWLEDGE_CACHE_FILE"
 echo "Run summary: $RUN_SUMMARY_FILE"
 echo "Knowledge transfer: $TRANSFER_FILE"
+if [[ "$ENABLE_CODE_CHANGE_AUDIT" == "1" ]]; then
+  echo "Code-change audit JSONL: $CODE_CHANGE_AUDIT_JSONL"
+  echo "Code-change audit Markdown: $CODE_CHANGE_AUDIT_MD"
+fi

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "docs/schemas/run_facts.schema.json",
+  "type": "object",
+  "required": ["run_id", "round", "mode"],
+  "properties": {
+    "run_id": {"type": "string"},
+    "round": {"type": "integer", "minimum": 1},
+    "mode": {"type": "string", "enum": ["research", "solve", "synthesis"]},
+    "instance": {"type": "string"},
+    "paper_gate_pass": {"type": "boolean"},
+    "paper_quality_score": {"type": "integer", "minimum": 0, "maximum": 100},
+    "score": {"type": "number"},
+    "exact_once": {"type": "integer", "minimum": 0},
+    "uncovered": {"type": "integer", "minimum": 0},
+    "overcovered": {"type": "integer", "minimum": 0},
+    "notes": {"type": "string"}
+  },
+  "additionalProperties": true
+}

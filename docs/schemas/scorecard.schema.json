@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "docs/schemas/scorecard.schema.json",
+  "type": "object",
+  "required": ["version", "baseline"],
+  "properties": {
+    "version": {"type": "integer", "minimum": 1},
+    "updated_utc": {"type": "string"},
+    "baseline": {"type": "object"},
+    "latest_round1_paper_gate": {"type": "object"},
+    "notes": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": false
+}

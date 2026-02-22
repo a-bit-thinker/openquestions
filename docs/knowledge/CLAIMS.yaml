@@ -1,0 +1,43 @@
+version: 1
+updated_utc: "2026-02-22T00:00:00Z"
+claims:
+  - claim_id: C001
+    status: active
+    statement: "Divisibility is required but incomplete for n < 200; derivation-veto must be a hard pre-solver gate."
+    evidence_refs:
+      - "steiner_logs/RESEARCH_PAPER.md"
+      - "steiner_logs/run_20260222_110632/notes/round_0001_notes.md"
+    metrics:
+      divisibility_admissible_count: 254
+      total_triples_scanned: 72964
+    falsification_ref: H001
+
+  - claim_id: C002
+    status: active
+    statement: "Strict feasibility invariants transfer better than scalar score for solver progress."
+    evidence_refs:
+      - "steiner_logs/RESEARCH_PAPER.md"
+      - "steiner_logs/PRACTICE_LOG.md"
+    metrics:
+      strict_overcovered_target: 0
+
+  - claim_id: C003
+    status: active
+    statement: "Symmetry/Kramer mode should be bounded and selected via orbit diagnostics."
+    evidence_refs:
+      - "steiner_logs/RESEARCH_PAPER.md"
+      - "steiner_logs/run_20260222_110632/notes/round_0001_notes.md"
+
+  - claim_id: C004
+    status: active
+    statement: "Residual exact-cover should be late-stage only under explicit eligibility thresholds."
+    evidence_refs:
+      - "steiner_logs/RESEARCH_PAPER.md"
+      - "steiner_logs/PRACTICE_LOG.md"
+
+  - claim_id: C005
+    status: active
+    statement: "Source transfer quality is valid only when theorem/mechanism and code-delta mapping are explicit and testable."
+    evidence_refs:
+      - "steiner_logs/RESEARCH_PAPER.md"
+      - "steiner_logs/run_20260222_110632/notes/round_0001_notes.md"

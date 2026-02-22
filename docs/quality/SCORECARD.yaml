@@ -1,0 +1,23 @@
+version: 1
+updated_utc: "2026-02-22T00:00:00Z"
+baseline:
+  total_triples_scanned: 72964
+  admissible_count: 254
+  divisibility_impossible_count: 72710
+  known_exists_certificates: 0
+  unknown_admissible_count: 254
+
+latest_round1_paper_gate:
+  run_id: "20260222_110632"
+  pass: true
+  quality_score: 100
+  claim_count: 5
+  detailed_claim_count: 5
+  technical_line_count: 74
+  active_hypotheses: 4
+  retired_hypotheses: 4
+  source_mapping: "4/4"
+
+notes:
+  - "Baseline counts sourced from steiner_logs/EXISTENCE_FRONTIER.md"
+  - "Round1 paper gate snapshot sourced from local gate replay on current paper+notes"

@@ -1,0 +1,22 @@
+version: 1
+updated_utc: "2026-02-22T00:00:00Z"
+hypotheses:
+  - retired_id: R001
+    statement: "Divisibility-only frontier ranking is sufficient."
+    retire_reason: "Derivation-veto can eliminate divisibility-admissible triples."
+    evidence_ref: "steiner_logs/RESEARCH_PAPER.md"
+
+  - retired_id: R002
+    statement: "Long binary-only symmetry exploration should be default."
+    retire_reason: "Non-binary orbit inflation and weak compression frequently stall this path."
+    evidence_ref: "steiner_logs/PRACTICE_LOG.md"
+
+  - retired_id: R003
+    statement: "Continue add-only search after strict frontier saturation."
+    retire_reason: "Observed plateau requires destroy/repack or absorber-style repair."
+    evidence_ref: "steiner_logs/PRACTICE_LOG.md"
+
+  - retired_id: R004
+    statement: "Invoke residual exact-cover at large uncovered mass."
+    retire_reason: "Residual exact-cover is structurally premature without eligibility threshold."
+    evidence_ref: "steiner_logs/RESEARCH_PAPER.md"

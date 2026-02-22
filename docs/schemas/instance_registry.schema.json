@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "docs/schemas/instance_registry.schema.json",
+  "type": "object",
+  "required": ["version", "registry"],
+  "properties": {
+    "version": {"type": "integer", "minimum": 1},
+    "updated_utc": {"type": "string"},
+    "registry": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["instance", "status", "admissible"],
+        "properties": {
+          "instance": {"type": "string"},
+          "status": {
+            "type": "string",
+            "enum": [
+              "impossible_divisibility",
+              "proved_nonexistence",
+              "provisional_nonexistence_veto",
+              "unknown_admissible_frontier",
+              "unknown_admissible",
+              "proved_existence"
+            ]
+          },
+          "basis": {"type": "string"},
+          "admissible": {"type": "boolean"},
+          "expected_blocks": {"type": "integer", "minimum": 0}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,34 @@
+version: 1
+updated_utc: "2026-02-22T00:00:00Z"
+hypotheses:
+  - hypothesis_id: H001
+    statement: "Verified derivation-veto gate increases useful solve yield by removing impossible q=r+1 candidates before solver spend."
+    expected_metric_movement:
+      - reduce_wasted_rounds
+      - increase_useful_solve_ratio
+    falsification_condition: "Reject if vetoed instances later receive valid certificates or matched-budget ablation shows no reduction in wasted rounds."
+    related_claims: [C001]
+
+  - hypothesis_id: H002
+    statement: "Hybrid selector (bounded symmetry + pressure-triggered repair) dominates single-engine policy on unknown admissible set."
+    expected_metric_movement:
+      - better_uncovered_slope
+      - maintain_strict_feasibility
+    falsification_condition: "Reject if three matched seeds fail to beat add-only baseline while keeping overcovered=0."
+    related_claims: [C002, C003]
+
+  - hypothesis_id: H003
+    statement: "Kramer mode is worthwhile only when orbit compression and coefficient diagnostics pass configured thresholds."
+    expected_metric_movement:
+      - lower_runtime_variance
+      - fewer_stalled_branches
+    falsification_condition: "Reject if diagnostics-qualified KM runs do not improve coverage-per-time across three instances."
+    related_claims: [C003]
+
+  - hypothesis_id: H004
+    statement: "Motif-coupled repacks outperform uncoupled local windows once (r-1) pressure tails harden."
+    expected_metric_movement:
+      - higher_net_block_gain
+      - lower_duplicate_neighborhood_rate
+    falsification_condition: "Reject if >=400 accepted repack neighborhoods yield net gain < 20 strict blocks."
+    related_claims: [C002, C004]

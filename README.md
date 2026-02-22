@@ -52,6 +52,13 @@ The loop is built to preserve progress across rounds and across runs.
 - Optional exact-cover backbone before heuristic/model steps.
 - Residual exact repair when eligible.
 - Strict round-5 synthesis gate (configurable).
+- Phase B/C/D runtime hooks:
+  - Phase B: docs dual-write to `docs/generated/runs/run_*/round_*`.
+  - Phase C: reconcile-before-solve (auto-pivot from vetoed instance to frontier candidate).
+  - Phase D: agent review (skeptic+verifier), non-blocking by default.
+- Explicit per-round code-change audit logs:
+  - `steiner_logs/run_*/CODE_CHANGE_AUDIT.jsonl`
+  - `steiner_logs/run_*/CODE_CHANGE_AUDIT.md`
 - Repo-wide memory refresh each round:
   - `steiner_logs/RESEARCH_LOG.md` (round1 knowledge)
   - `steiner_logs/PRACTICE_LOG.md` (round2-5 trajectory)
@@ -69,6 +76,10 @@ The loop is built to preserve progress across rounds and across runs.
 - `EXACT_BACKBONE_ENABLED`
 - `AUTO_RESIDUAL_REPAIR`
 - `USE_CODEX`
+- `ENABLE_DOCS_DUAL_WRITE`
+- `ENABLE_REVIEW_RECONCILE`
+- `STRICT_AGENT_REVIEW_GATE`
+- `ENABLE_CODE_CHANGE_AUDIT`
 
 Example:
 
