@@ -1,0 +1,30 @@
+{
+  "generated_utc": "2026-02-22T15:33:37.762914+00:00",
+  "mode": "research",
+  "passed": false,
+  "reviewers": {
+    "skeptic": {
+      "finding_count": 1,
+      "findings": [
+        "Research paper missing: steiner_logs_smoke_hooks/RESEARCH_PAPER.md"
+      ],
+      "passed": false
+    },
+    "verifier": {
+      "finding_count": 1,
+      "findings": [
+        "Round1 research requires non-empty SOURCE_TRANSFER_DELTAS entries."
+      ],
+      "metrics": {
+        "claim_delta_entries": 3,
+        "hypothesis_delta_entries": 4,
+        "metrics_rows_total": 5,
+        "source_delta_entries": 0
+      },
+      "passed": false
+    }
+  },
+  "round": 1,
+  "round_id": "round_0001",
+  "run_id": "20260222_smoke_hooks"
+}

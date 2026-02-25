@@ -1,14 +1,48 @@
 # Local Paper Notes
 
-Generated (UTC): 2026-02-21T14:40:48.832104+00:00
+Generated (UTC): 2026-02-22T16:50:46.359209+00:00
 Papers directory: /root/openquestions/papers
 
 ## Intent
 - Keep reusable local-paper reasoning so round1 focuses on proof strategy, not repeated link collection.
 - Prioritize method transfer from local PDFs into solver architecture and proof artifacts.
 
+## Computational and Theoretical Roadmap for Steiner Systems with Strength 6–9 and n _ 200.pdf
+- Parsed title hint: Computational and Theoretical Roadmap for
+- Extractor backend: pdftotext
+- Transfer methods to apply in Steiner loop:
+  - No high-confidence strategy hits extracted; inspect paper manually.
+- Prompting strategy excerpt:
+  - symmetry templates (affine/projective planes, nets, etc.), which can still be useful in your regime through
+
+## arxiv_1401.3665.pdf
+- Parsed title hint: The existence of designs
+- Extractor backend: pdftotext
+- Transfer methods to apply in Steiner loop:
+  - No high-confidence strategy hits extracted; inspect paper manually.
+- Prompting strategy excerpt:
+  - of possible local modifications. We treat this partial decomposition as a template for the final
+  - partial decomposition that covers all edges not in the template, which also spills over slightly into
+  - the template, so that every edge is covered once or twice, and very few edges are covered twice (we
+  - call the latter the ‘spill’). The crucial point is that the choice of the template was such that the spill
+  - its basic form) as applied to the problem of designs, the analogue of our template would be a random
+  - Nevertheless, we will see that a suitable algebraically defined template has a dense well-distributed
+  - template via a suitable local modification. Our template can be thought of as a general absorber,
+  - We further ensure that each positive clique can be absorbed into the template, via a series of
+  - x+y template. These may be swapped with the
+  - template of a graph G in [42], we randomly embed V (G) in F2a for some a such that 2a is not much
+
+## arxiv_1611.06827.pdf
+- Parsed title hint: THE EXISTENCE OF DESIGNS VIA ITERATIVE ABSORPTION:
+- Extractor backend: pdftotext
+- Transfer methods to apply in Steiner loop:
+  - No high-confidence strategy hits extracted; inspect paper manually.
+- Prompting strategy excerpt:
+  - verify the conditions of Lemma 11.9.
+
 ## oai_first_proof.pdf
 - Parsed title hint: First Proof?
+- Extractor backend: pdftotext
 - Transfer methods to apply in Steiner loop:
   - Seed-idea fanout before solving (multiple independent approaches).
   - Bounded verify-revise loops (up to 3 rounds).
@@ -20,9 +54,9 @@ Papers directory: /root/openquestions/papers
   - • Generate a small number of seed ideas.
   - • Prompt the model to solve the given problem using each of the seed ideas.
   - • Repeat up to 3 times:
-  - 3 Verify (i) correctness of the proof and (ii) validity of any cited material and biblio-
-  - 3 If gaps are found, prompt the model to revise the drafted solution.
-  - • If the veri昀椀cations pass, typeset the resulting solution.
+  - – Verify (i) correctness of the proof and (ii) validity of any cited material and biblio-
+  - – If gaps are found, prompt the model to revise the drafted solution.
+  - • If the verifications pass, typeset the resulting solution.
   - A.2 Prompt templates
   - A.2.1 Generate ideas template
 

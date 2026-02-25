@@ -1,0 +1,101 @@
+{
+  "actual_block_count": 4402,
+  "additive_repair_feasible": true,
+  "admissibility": {
+    "checks": [
+      {
+        "denominator": 28,
+        "i": 0,
+        "numerator": 475020,
+        "quotient": 16965,
+        "remainder": 0
+      },
+      {
+        "denominator": 21,
+        "i": 1,
+        "numerator": 98280,
+        "quotient": 4680,
+        "remainder": 0
+      },
+      {
+        "denominator": 15,
+        "i": 2,
+        "numerator": 17550,
+        "quotient": 1170,
+        "remainder": 0
+      },
+      {
+        "denominator": 10,
+        "i": 3,
+        "numerator": 2600,
+        "quotient": 260,
+        "remainder": 0
+      },
+      {
+        "denominator": 6,
+        "i": 4,
+        "numerator": 300,
+        "quotient": 50,
+        "remainder": 0
+      },
+      {
+        "denominator": 3,
+        "i": 5,
+        "numerator": 24,
+        "quotient": 8,
+        "remainder": 0
+      }
+    ],
+    "divisibility_failures": [],
+    "expected_block_count": 16965,
+    "instance": {
+      "n": 29,
+      "q": 8,
+      "r": 6
+    },
+    "is_admissible": true,
+    "is_well_formed": true,
+    "issues": [],
+    "replication_numbers": {
+      "lambda_0": 16965,
+      "lambda_1": 4680,
+      "lambda_2": 1170,
+      "lambda_3": 260,
+      "lambda_4": 50,
+      "lambda_5": 8
+    }
+  },
+  "coverage_ratio": 0.259475,
+  "divisibility_failures": [],
+  "duplicate_block_count": 0,
+  "evaluation_runtime_sec": 0.114822,
+  "exact_once_r_subsets": 123256,
+  "expected_block_count": 16965,
+  "instance": {
+    "n": 29,
+    "q": 8,
+    "r": 6
+  },
+  "invalid_block_count": 0,
+  "is_valid": false,
+  "issues": [],
+  "min_additional_blocks_needed_for_uncovered": 12563,
+  "overcovered_r_subsets": 0,
+  "overflow_multiplicity": 0,
+  "oversubscribed_r_minus_1_subsets": 0,
+  "point_degree_gap": 31,
+  "point_degree_max": 1231,
+  "point_degree_min": 1200,
+  "r_minus_1_max_degree": 6,
+  "r_minus_1_target_degree": 8,
+  "remaining_block_slots": 12563,
+  "residual_repair_hint": {
+    "eligible": false,
+    "reason": "not eligible: uncovered fraction is too large; use constructive search first"
+  },
+  "score": 0.0,
+  "target_point_degree": 4680,
+  "total_required_r_subsets": 475020,
+  "uncovered_r_subsets": 351764,
+  "unique_covered_r_subsets": 123256
+}

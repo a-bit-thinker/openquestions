@@ -1,0 +1,136 @@
+{
+  "generated_utc": "2026-02-22T16:40:05.329588+00:00",
+  "instance": {
+    "n": 25,
+    "q": 9,
+    "r": 8
+  },
+  "instance_label": "S(8,9,25)",
+  "metrics": {
+    "actual_block_count": 55234,
+    "additive_repair_feasible": true,
+    "admissibility": {
+      "checks": [
+        {
+          "denominator": 9,
+          "i": 0,
+          "numerator": 1081575,
+          "quotient": 120175,
+          "remainder": 0
+        },
+        {
+          "denominator": 8,
+          "i": 1,
+          "numerator": 346104,
+          "quotient": 43263,
+          "remainder": 0
+        },
+        {
+          "denominator": 7,
+          "i": 2,
+          "numerator": 100947,
+          "quotient": 14421,
+          "remainder": 0
+        },
+        {
+          "denominator": 6,
+          "i": 3,
+          "numerator": 26334,
+          "quotient": 4389,
+          "remainder": 0
+        },
+        {
+          "denominator": 5,
+          "i": 4,
+          "numerator": 5985,
+          "quotient": 1197,
+          "remainder": 0
+        },
+        {
+          "denominator": 4,
+          "i": 5,
+          "numerator": 1140,
+          "quotient": 285,
+          "remainder": 0
+        },
+        {
+          "denominator": 3,
+          "i": 6,
+          "numerator": 171,
+          "quotient": 57,
+          "remainder": 0
+        },
+        {
+          "denominator": 2,
+          "i": 7,
+          "numerator": 18,
+          "quotient": 9,
+          "remainder": 0
+        }
+      ],
+      "divisibility_failures": [],
+      "expected_block_count": 120175,
+      "instance": {
+        "n": 25,
+        "q": 9,
+        "r": 8
+      },
+      "is_admissible": true,
+      "is_well_formed": true,
+      "issues": [],
+      "replication_numbers": {
+        "lambda_0": 120175,
+        "lambda_1": 43263,
+        "lambda_2": 14421,
+        "lambda_3": 4389,
+        "lambda_4": 1197,
+        "lambda_5": 285,
+        "lambda_6": 57,
+        "lambda_7": 9
+      }
+    },
+    "coverage_ratio": 0.459613,
+    "divisibility_failures": [],
+    "duplicate_block_count": 0,
+    "exact_once_r_subsets": 497106,
+    "expected_block_count": 120175,
+    "instance": {
+      "n": 25,
+      "q": 9,
+      "r": 8
+    },
+    "invalid_block_count": 0,
+    "is_valid": false,
+    "issues": [],
+    "min_additional_blocks_needed_for_uncovered": 64941,
+    "overcovered_r_subsets": 0,
+    "overflow_multiplicity": 0,
+    "oversubscribed_r_minus_1_subsets": 0,
+    "point_degree_gap": 32,
+    "point_degree_max": 19898,
+    "point_degree_min": 19866,
+    "r_minus_1_max_degree": 8,
+    "r_minus_1_target_degree": 9,
+    "remaining_block_slots": 64941,
+    "residual_repair_hint": {
+      "eligible": false,
+      "reason": "not eligible: uncovered fraction is too large; use constructive search first"
+    },
+    "score": 24.35,
+    "target_point_degree": 43263,
+    "total_required_r_subsets": 1081575,
+    "uncovered_r_subsets": 584469,
+    "unique_covered_r_subsets": 497106
+  },
+  "mode": "solve",
+  "notes_file": "steiner_logs/run_20260222_154119/notes/round_0004_notes.md",
+  "round": 4,
+  "round_id": "round_0004",
+  "run_id": "20260222_154119",
+  "run_log_dir": "steiner_logs/run_20260222_154119",
+  "techniques": [
+    "solve-r8-round-4",
+    "exact-backbone-none-too_large"
+  ],
+  "version": 1
+}

@@ -1,0 +1,101 @@
+{
+  "actual_block_count": 0,
+  "additive_repair_feasible": true,
+  "admissibility": {
+    "checks": [
+      {
+        "denominator": 7,
+        "i": 0,
+        "numerator": 100947,
+        "quotient": 14421,
+        "remainder": 0
+      },
+      {
+        "denominator": 6,
+        "i": 1,
+        "numerator": 26334,
+        "quotient": 4389,
+        "remainder": 0
+      },
+      {
+        "denominator": 5,
+        "i": 2,
+        "numerator": 5985,
+        "quotient": 1197,
+        "remainder": 0
+      },
+      {
+        "denominator": 4,
+        "i": 3,
+        "numerator": 1140,
+        "quotient": 285,
+        "remainder": 0
+      },
+      {
+        "denominator": 3,
+        "i": 4,
+        "numerator": 171,
+        "quotient": 57,
+        "remainder": 0
+      },
+      {
+        "denominator": 2,
+        "i": 5,
+        "numerator": 18,
+        "quotient": 9,
+        "remainder": 0
+      }
+    ],
+    "divisibility_failures": [],
+    "expected_block_count": 14421,
+    "instance": {
+      "n": 23,
+      "q": 7,
+      "r": 6
+    },
+    "is_admissible": true,
+    "is_well_formed": true,
+    "issues": [],
+    "replication_numbers": {
+      "lambda_0": 14421,
+      "lambda_1": 4389,
+      "lambda_2": 1197,
+      "lambda_3": 285,
+      "lambda_4": 57,
+      "lambda_5": 9
+    }
+  },
+  "coverage_ratio": 0.0,
+  "divisibility_failures": [],
+  "duplicate_block_count": 0,
+  "evaluation_runtime_sec": 4.5e-05,
+  "exact_once_r_subsets": 0,
+  "expected_block_count": 14421,
+  "instance": {
+    "n": 23,
+    "q": 7,
+    "r": 6
+  },
+  "invalid_block_count": 0,
+  "is_valid": false,
+  "issues": [],
+  "min_additional_blocks_needed_for_uncovered": 14421,
+  "overcovered_r_subsets": 0,
+  "overflow_multiplicity": 0,
+  "oversubscribed_r_minus_1_subsets": 0,
+  "point_degree_gap": 0,
+  "point_degree_max": 0,
+  "point_degree_min": 0,
+  "r_minus_1_max_degree": 0,
+  "r_minus_1_target_degree": 9,
+  "remaining_block_slots": 14421,
+  "residual_repair_hint": {
+    "eligible": false,
+    "reason": "not eligible: residual exact repair is for late-stage candidates, not empty starts"
+  },
+  "score": 0.0,
+  "target_point_degree": 4389,
+  "total_required_r_subsets": 100947,
+  "uncovered_r_subsets": 100947,
+  "unique_covered_r_subsets": 0
+}

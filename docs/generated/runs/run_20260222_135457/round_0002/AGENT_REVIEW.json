@@ -1,0 +1,28 @@
+{
+  "generated_utc": "2026-02-22T14:31:05.811289+00:00",
+  "mode": "solve",
+  "passed": false,
+  "reviewers": {
+    "skeptic": {
+      "finding_count": 1,
+      "findings": [
+        "Solve round targets S(6,7,19) but registry status is 'provisional_nonexistence_veto'; route should pivot before solver spend."
+      ],
+      "passed": false
+    },
+    "verifier": {
+      "finding_count": 0,
+      "findings": [],
+      "metrics": {
+        "claim_delta_entries": 12,
+        "hypothesis_delta_entries": 8,
+        "metrics_rows_total": 4,
+        "source_delta_entries": 0
+      },
+      "passed": true
+    }
+  },
+  "round": 2,
+  "round_id": "round_0002",
+  "run_id": "20260222_135457"
+}

@@ -1,0 +1,27 @@
+{
+  "generated_utc": "2026-02-22T13:36:02.996736+00:00",
+  "instance": {
+    "n": 19,
+    "q": 7,
+    "r": 6
+  },
+  "instance_label": "S(6,7,19)",
+  "metrics": {
+    "exact_once_r_subsets": 0,
+    "is_valid": false,
+    "overcovered_r_subsets": 0,
+    "score": 0.0,
+    "total_required_r_subsets": 27132,
+    "uncovered_r_subsets": 27132
+  },
+  "mode": "research",
+  "notes_file": "steiner_logs/run_20260222_121719/notes/round_0001_notes.md",
+  "round": 1,
+  "round_id": "round_0001",
+  "run_id": "20260222_121719",
+  "run_log_dir": "steiner_logs/run_20260222_121719",
+  "techniques": [
+    "research-cache"
+  ],
+  "version": 1
+}

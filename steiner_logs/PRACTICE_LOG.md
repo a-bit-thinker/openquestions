@@ -1,8 +1,8 @@
 # Global Practice Log (Rounds2-5)
 
-Generated (UTC): 2026-02-21T14:40:44.324040+00:00
+Generated (UTC): 2026-02-22T16:50:46.240550+00:00
 Log root: steiner_logs
-Current run dir: /root/openquestions/steiner_logs/run_20260221_143916
+Current run dir: /root/openquestions/steiner_logs/run_20260222_154119
 
 ## Intent
 - Aggregate solver behavior and metrics from rounds 2-5 across runs.
@@ -37,6 +37,19 @@ Current run dir: /root/openquestions/steiner_logs/run_20260221_143916
 | run_20260221_013905 | 3 | S(7,8,18) | 40.56 | false | 18312/31824 | 13512 | 0 |
 | run_20260221_013905 | 4 | S(8,9,19) | 33.25 | false | 39546/75582 | 36036 | 0 |
 | run_20260221_013905 | 5 | S(9,10,20) | 27.83 | false | 81380/167960 | 86580 | 0 |
+| run_20260222_012007 | 2 | S(6,7,23) | 50.09 | false | 64960/100947 | 35987 | 0 |
+| run_20260222_012007 | 3 | S(7,8,20) | 43.9 | false | 46456/77520 | 31064 | 0 |
+| run_20260222_012007 | 4 | S(8,9,21) | 35.16 | false | 109242/203490 | 94248 | 0 |
+| run_20260222_012007 | 5 | S(9,10,22) | 26.85 | false | 237520/497420 | 259900 | 0 |
+| run_20260222_052536 | 2 | S(6,8,29) | 0 | false | 123256/475020 | 351764 | 0 |
+| run_20260222_052536 | 3 | S(7,8,24) | 28.22 | false | 168640/346104 | 177464 | 0 |
+| run_20260222_052536 | 4 | S(8,9,21) | 36.51 | false | 111204/203490 | 92286 | 0 |
+| run_20260222_052536 | 5 | S(9,10,22) | 28.01 | false | 241650/497420 | 255770 | 0 |
+| run_20260222_135457 | 2 | S(6,7,19) | 50.59 | false | 17556/27132 | 9576 | 0 |
+| run_20260222_154119 | 2 | S(6,7,23) | 50.16 | false | 65009/100947 | 35938 | 0 |
+| run_20260222_154119 | 3 | S(7,8,24) | 28.25 | false | 168720/346104 | 177384 | 0 |
+| run_20260222_154119 | 4 | S(8,9,25) | 24.35 | false | 497106/1081575 | 584469 | 0 |
+| run_20260222_154119 | 5 | S(9,10,26) | 15.44 | false | 1237250/3124550 | 1887300 | 0 |
 
 ## Round Highlights
 - run_20260219_030101/round_0002
@@ -201,3 +214,146 @@ Current run dir: /root/openquestions/steiner_logs/run_20260221_143916
   - next-hypothesis: Improve `8138 -> 8155..8195` blocks,
   - next-hypothesis: reduce uncovered by `170..570`,
   - next-hypothesis: keep `overcovered=0`, `oversubscribed_(r-1)=0`, and `r_minus_1_max_degree <= 6`.
+- run_20260222_012007/round_0002
+  - advance: Established a reproducible strict-feasible plateau-break path for `S(6,7,23)` by combining a mandatory symmetry front gate with uncovered-driven LNS destroy/repack intensification.
+  - advance: Symmetry gate executed first with explicit orbit/coefficient diagnostics and an actual cyclic packed trial.
+  - advance: Add-only strict stage confirmed plateau (`9237 -> 9237`).
+  - advance: LNS stages advanced the strict frontier `9237 -> 9280` with monotone uncovered reduction `36288 -> 35987` and `overcovered=0` throughout.
+  - advance: Point-degree spread improved `426 -> 413` while preserving `(r-1)` max at target (`9`).
+  - next-hypothesis: Two-step motif-coupled LNS chains (reusing the same uncovered motif neighborhood across consecutive windows) with periodic neutral rebalance sweeps will outperform uncoupled random-window LNS from `9280`.
+  - next-hypothesis: First-window success opens transient local slack; immediate reuse of that motif should increase second-window augment probability before constraints re-harden.
+  - next-hypothesis: Periodic neutral rebalance reduces degree-tail concentration, which should increase feasible refill options in later windows.
+  - next-hypothesis: Improve `9280 -> 9310..9380` blocks,
+  - next-hypothesis: reduce uncovered by `210..700`,
+- run_20260222_012007/round_0003
+  - advance: Established a reproducible strict-feasible improvement loop for `S(7,8,20)` that combines mandatory symmetry triage with uncovered-driven `k -> k+1` LNS repacks.
+  - advance: Symmetry gate executed first with explicit orbit diagnostics and bounded packed probes.
+  - advance: Stage-B seed frontier improved to `5634` blocks, then Stage-C LNS improved to `5807` (`+173` from seed, `+256` from round start).
+  - advance: Verifier movement: `score 40.20 -> 43.90`, `exact_once 44408 -> 46456`, `uncovered 33112 -> 31064`, `overcovered=0` unchanged.
+  - advance: `(r-1)` hard gate remained strict: max `7` at target and oversubscribed count `0` throughout.
+  - next-hypothesis: Two-step motif reuse with larger windows (`k=2..4`) and short motif-taboo will improve gain-per-1000 trials beyond the current `k<=3` loop from `5807`.
+  - next-hypothesis: First accepted exchange releases local row/six-subset slack around the same uncovered motif; immediate reuse before re-hardening should increase second-step augment probability.
+  - next-hypothesis: improve `5807 -> 5850..5920` blocks,
+  - next-hypothesis: reduce uncovered by `344..904`,
+  - next-hypothesis: keep `overcovered=0`, `oversubscribed_(r-1)=0`, and `r_minus_1_max_degree <= 7`.
+- run_20260222_012007/round_0004
+  - advance: Established the first strict-feasible improving frontier for `S(8,9,21)` in this repository by executing the mandatory symmetry gate, proving add-only exhaustion, and then extracting monotone gains with larger-window motif-coupled LNS under hard verifier constraints.
+  - advance: Stage A symmetry was executed first and rejected on quality, not on missing diagnostics.
+  - advance: Stage B add-only produced `0` gains despite large attempt budgets.
+  - advance: Stage C LNS passes yielded `+31` net strict blocks (`12107 -> 12138`) with verifier movement:
+  - advance: `score 34.97 -> 35.16`,
+  - next-hypothesis: Two-step motif reuse with medium-large windows (`k=4..10`) around the same capped `7`-subset cluster, interleaved with short neutral rebalance sweeps, will increase net gain-per-1000 trials beyond the current sparse baseline.
+  - next-hypothesis: First accepted windows create transient local slack around the released capped motif. Immediate reuse of the same motif before re-hardening should raise second-window success probability; neutral sweeps reduce degree-tail concentration and enlarge feasible refill options.
+  - next-hypothesis: Improve `12138 -> 12170..12260` blocks,
+  - next-hypothesis: reduce uncovered by `288..1098`,
+  - next-hypothesis: keep `overcovered=0`, `oversubscribed_(r-1)=0`, and `r_minus_1_max_degree <= 7`.
+- run_20260222_012007/round_0005
+  - advance: Established a symmetry-led strict construction path for `S(9,10,22)` that reaches a strong no-collision frontier and then improves it with strict `k -> k+1` LNS repacks.
+  - advance: Stage A symmetry diagnostics were executed first and passed tractability checks (`C22` non-binary columns only `48/29414`).
+  - advance: Cyclic orbit-packed seed immediately produced `23716` strict-feasible blocks with `score=26.75`, `overcovered=0`, `oversubscribed_(r-1)=0`.
+  - advance: Stage B strict add-only raised this to `23738` (`score=26.81`).
+  - advance: Stage C strict LNS raised to `23752` (`score=26.85`, `exact_once=237520`, `uncovered=259900`) while preserving all hard invariants.
+  - next-hypothesis: Medium-window strict local exact repacks (`k=4..10`) centered on cap-7 `8`-subset tails will outperform the current small-window strict LNS at this frontier.
+  - next-hypothesis: Current accepted moves are sparse because small windows expose too little combinational slack.
+  - next-hypothesis: Releasing slightly larger coupled neighborhoods around tight `8`-faces should expose additional strict `k -> k+1` augment opportunities while keeping `overcovered=0`.
+  - next-hypothesis: Improve `23752 -> 23810..23960` blocks.
+  - next-hypothesis: Reduce uncovered by `580..2080`.
+- run_20260222_052536/round_0002
+  - advance: Established a strict symmetry-seeded construction path for `S(6,8,29)` and moved the instance from empty start to a reusable strict frontier (`4402` blocks) with zero collisions.
+  - advance: Stage A symmetry was executed first and accepted as tractable (`C29` sample non-binary share `0.83%`, `max_coeff=2`; `117` accepted cyclic orbits).
+  - advance: Stage B + continuations improved strict frontier `3393 -> 4402` while keeping `overcovered=0` and `(r-1)` oversubscription `0`.
+  - advance: Verifier movement: `exact_once 0 -> 123256`, `uncovered 475020 -> 351764`, `overcovered 0 -> 0`.
+  - advance: Stage C LNS was explicitly tested (`k>1`) but delivered sparse net gains at this frontier.
+  - next-hypothesis: For `S(6,8,29)`, a two-phase strict policy (`cyclic orbit seed -> long uncovered-driven add-only continuation`) will outperform short-window strict LNS in uncovered reduction under matched compute budgets.
+  - next-hypothesis: The current candidate still has substantial strict slack (`r_minus_1_max_degree=6 < 8`), so strict additions can continue to harvest uncovered 6-subsets efficiently.
+  - next-hypothesis: Short LNS windows are currently opening little additional local slack relative to their search cost.
+  - next-hypothesis: Improve `4402 -> 5000..5800` blocks.
+  - next-hypothesis: Reduce uncovered by `16800..39200`.
+- run_20260222_052536/round_0003
+  - advance: Established the first strong strict-feasible certificate frontier for `S(7,8,24)` in this repo using a symmetry-seeded + strict-LNS pipeline.
+  - advance: Candidate improved from empty to `21080` strict-feasible blocks.
+  - advance: Verifier moved to `score=28.22`, `exact_once=168640/346104`, `uncovered=177464`, while preserving `overcovered=0` and zero `(r-1)` oversubscription.
+  - advance: Mandatory architecture was executed in full order: symmetry gate -> reserve-first boosting -> LNS repack -> residual gate.
+  - advance: Reuse cyclic orbit seed generation as default Stage A for this instance.
+  - next-hypothesis: On this frontier, hotspot-guided medium-window strict repacks (`k=4..10`) targeted at near-cap 6-subsets will outperform current mixed local/global LNS neighborhoods.
+  - next-hypothesis: Current LNS acceptance is low because neighborhoods are broad and weakly coupled to pressure motifs.
+  - next-hypothesis: Centering destroy/repack windows on high-load 6-subsets should expose more feasible `k -> k+1` opportunities while preserving strict gates.
+  - next-hypothesis: Improve `21080 -> 21250..21650` blocks.
+  - next-hypothesis: Reduce uncovered by `1360..4560`.
+- run_20260222_052536/round_0004
+  - advance: Established a reproducible strict frontier lift for `S(8,9,21)` by coupling a mandatory symmetry gate with high-yield exact local repacks from the incumbent candidate.
+  - advance: Score improved `35.16 -> 36.51`.
+  - advance: Exact-once improved `109242 -> 111204`.
+  - advance: Uncovered reduced `94248 -> 92286` with `overcovered=0` unchanged.
+  - advance: `(r-1)` hard cap stayed tight (`7/7`) with zero oversubscription.
+  - next-hypothesis: Conflict-core-guided `k>1` repacks (remove blocks around the same low-conflict 8-subset interaction graph, then solve local refill exactly) will outperform the current generic overlap-based `k>1` neighborhoods at the `12356` strict frontier.
+  - next-hypothesis: Stage B gains indicate many profitable moves are very local and structured; targeting neighborhoods built from actual conflict-1/conflict-2 block interactions should raise refill quality and unlock true `k -> k+1` gains.
+  - next-hypothesis: Improve to `12380..12440` blocks,
+  - next-hypothesis: reduce uncovered by `216..756`,
+  - next-hypothesis: keep `overcovered=0`, `oversubscribed_(r-1)=0`, and `r_minus_1_max_degree<=7`.
+- run_20260222_052536/round_0005
+  - advance: Established a high-yield strict improvement regime for `S(9,10,22)` that pushes the certified zero-collision frontier from `23752` to `24165` blocks without violating `(r-1)` caps.
+  - advance: Score improved `26.85 -> 28.01`.
+  - advance: Exact-once increased `237520 -> 241650`.
+  - advance: Uncovered reduced `259900 -> 255770` with `overcovered=0` maintained.
+  - advance: `(r-1)` load stayed `7/7` with `oversubscribed_(r-1)=0` throughout.
+  - next-hypothesis: Two-tier strict neighborhoods (`1->2` for rapid gains plus periodic `k=2..4 -> k+1` exact micro-packs) will improve gain-per-time over `1->2`-only continuation from this new frontier.
+  - next-hypothesis: `1->2` quickly exploits immediate local slack; periodic larger windows should unlock motifs that single-block release cannot expose.
+  - next-hypothesis: Move `24165 -> 24350..24750` blocks under unchanged strict gates.
+  - next-hypothesis: Reduce uncovered by `1850..5850` while keeping `overcovered=0` and `(r-1)` oversubscription `0`.
+  - next-hypothesis: Reject if after `>=12000` mixed neighborhoods the net gain is `< +120` blocks or if gain-per-1000 neighborhoods under mixed windows is not above `1->2`-only baseline.
+- run_20260222_135457/round_0002
+  - advance: Established the first strict-feasible constructive frontier for `S(6,7,19)` in this run, moving from `2438` to `2508` blocks while preserving zero collisions and zero `(r-1)` oversubscription.
+  - advance: Score improved `48.06 -> 50.59`.
+  - advance: Exact-once increased `17066 -> 17556`.
+  - advance: Uncovered reduced `10066 -> 9576` with `overcovered=0` maintained.
+  - advance: `(r-1)` load stayed at cap `7/7` with oversubscribed count always `0`.
+  - next-hypothesis: A two-tier strict schedule (pressure-relief neutral repacks followed by improvement-only repacks) will continue improving this frontier beyond `2508` blocks without violating strict gates.
+  - next-hypothesis: Neutral repacks lower local 5-subset saturation, creating new feasible `k->k+1` repack opportunities that add-only cannot see.
+  - next-hypothesis: Move `2508 -> 2518..2558` blocks under unchanged strict gates.
+  - next-hypothesis: Reduce uncovered by `70..350` while keeping `overcovered=0` and `(r-1)` oversubscription `0`.
+  - next-hypothesis: Keep `r_minus_1_max_degree=7` and hold point-degree gap near or below `~110`.
+- run_20260222_154119/round_0002
+  - advance: Broke the long-standing strict `S(6,7,23)` frontier from `9280` to `9287` blocks while preserving `overcovered=0` and zero `(r-1)` oversubscription.
+  - advance: Score improved `50.09 -> 50.16`.
+  - advance: Exact-once improved `64960 -> 65009`.
+  - advance: Uncovered reduced `35987 -> 35938` with `overcovered=0` unchanged.
+  - advance: `(r-1)` load remained at cap (`9/9`) with oversubscribed count `0` throughout.
+  - next-hypothesis: A motif-coupled mixed-window strict LNS schedule (`k=2..5` core plus periodic `k=6..8` bursts) starting from the new `9287` frontier will outperform fixed-window continuation.
+  - next-hypothesis: Small windows keep acceptance rate nonzero; periodic larger windows can cross the residual local bottlenecks that blocked further `+1` gains after trial ~700.
+  - next-hypothesis: Improve `9287 -> 9300..9340` blocks.
+  - next-hypothesis: Reduce uncovered by `91..371` while keeping `overcovered=0`, `oversubscribed_(r-1)=0`, and `r_minus_1_max_degree<=9`.
+  - next-hypothesis: Reject this hypothesis if after `>=30000` neighborhoods the net gain is `< +5` blocks or if gain-per-1000 neighborhoods is not above the current round's late-stage baseline.
+- run_20260222_154119/round_0003
+  - advance: Improved the strict `S(7,8,24)` frontier from `21080` to `21090` blocks with all hard verifier gates intact.
+  - advance: Score improved `28.22 -> 28.25`.
+  - advance: Exact-once improved `168640 -> 168720`.
+  - advance: Uncovered reduced `177464 -> 177384`.
+  - advance: `overcovered=0` preserved and `oversubscribed_(r-1)=0` preserved.
+  - next-hypothesis: Cap-9-centered coupled LNS with two-step neighborhoods (`k=3..6` then `k=2..4` on the same motif) plus short neutral rebalancing sweeps will outperform independent random neighborhoods from `21090`.
+  - next-hypothesis: Current failures suggest transient slack collapses before reuse. Immediate motif reuse should exploit that slack window; neutral rebalancing should reduce point-degree tail pressure and reopen feasible fills.
+  - next-hypothesis: Improve `21090 -> 21120..21210` blocks.
+  - next-hypothesis: Reduce uncovered by `240..960`.
+  - next-hypothesis: Keep `overcovered=0`, `oversubscribed_(r-1)=0`, and `r_minus_1_max_degree <= 9`.
+- run_20260222_154119/round_0004
+  - advance: Established the first strict-feasible frontier for `S(8,9,25)` in this repository by moving from empty candidate to `55234` blocks while preserving zero collisions and zero `(r-1)` oversubscription.
+  - advance: Score improved `0.00 -> 24.35`.
+  - advance: Exact-once improved `0 -> 497106`.
+  - advance: Uncovered reduced `1081575 -> 584469` with `overcovered=0` throughout.
+  - advance: `(r-1)` load stayed below cap (`max 8` vs target `9`), oversubscribed count `0`.
+  - next-hypothesis: An alternating tri-phase loop (`short orbit micro-burst -> uncovered-driven nibble -> motif-coupled LNS with larger windows k=4..7`) will outperform repeating nibble+LNS alone from `55234`.
+  - next-hypothesis: Orbit micro-bursts inject globally balanced fresh structure; nibble captures low-hanging uncovered 8-subsets; larger-window LNS can repack local bottlenecks that block single-block additions once acceptance decays.
+  - next-hypothesis: Improve `55234 -> 56000..57500` blocks.
+  - next-hypothesis: Reduce uncovered by `6900..20300`.
+  - next-hypothesis: Keep `overcovered=0`, `oversubscribed_(r-1)=0`, and `r_minus_1_max_degree <= 9`.
+- run_20260222_154119/round_0005
+  - advance: Established the first strict-feasible frontier for `S(9,10,26)` in this repository by moving from empty candidate to `123725` blocks while preserving `overcovered=0` and zero `(r-1)` oversubscription.
+  - advance: Score improved `0.00 -> 15.44`.
+  - advance: Exact-once improved `0 -> 1237250`.
+  - advance: Uncovered reduced `3124550 -> 1887300`.
+  - advance: `(r-1)` cap discipline held (`max 9`, target `9`, oversubscribed count `0`).
+  - next-hypothesis: A four-phase strict loop (`short cyclic orbit micro-burst -> uncovered-driven add-only -> motif-coupled mixed-window LNS (k=3..7) -> short revision sweep`) will outperform the current fixed-budget schedule from `123725`.
+  - next-hypothesis: orbit micro-bursts refresh global balance; add-only captures easy uncovered mass; larger-window repacks release local cap bottlenecks that small windows miss; revision sweep harvests reopened slack.
+  - next-hypothesis: Improve `123725 -> 127000..134000` blocks.
+  - next-hypothesis: Reduce uncovered by `32750..102750`.
+  - next-hypothesis: Keep `overcovered=0`, `oversubscribed_(r-1)=0`, and `r_minus_1_max_degree <= 9`.

@@ -1,0 +1,26 @@
+{
+  "generated_utc": "2026-02-22T14:11:11.131942+00:00",
+  "mode": "research",
+  "passed": true,
+  "reviewers": {
+    "skeptic": {
+      "finding_count": 0,
+      "findings": [],
+      "passed": true
+    },
+    "verifier": {
+      "finding_count": 0,
+      "findings": [],
+      "metrics": {
+        "claim_delta_entries": 11,
+        "hypothesis_delta_entries": 8,
+        "metrics_rows_total": 3,
+        "source_delta_entries": 5
+      },
+      "passed": true
+    }
+  },
+  "round": 1,
+  "round_id": "round_0001",
+  "run_id": "20260222_135457"
+}

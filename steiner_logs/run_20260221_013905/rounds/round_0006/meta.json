@@ -1,0 +1,14 @@
+{
+  "closed_at": "2026-02-22T01:05:23.599204+00:00",
+  "created_at": "2026-02-22T01:05:19.207544+00:00",
+  "hypothesis": "Chained motif-coupled 1->2 strict repairs improve gain-per-trial",
+  "instance": {
+    "n": 20,
+    "q": 10,
+    "r": 9
+  },
+  "objective": "Continue S(9,10,20) strict micro-augment search from 8138 frontier",
+  "parent_round_id": null,
+  "round_id": "round_0006",
+  "status": "closed"
+}

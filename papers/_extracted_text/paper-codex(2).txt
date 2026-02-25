@@ -1,0 +1,79 @@
+# RESEARCH_PAPER Draft: paper-codex(2)
+
+Date: 2026-02-22
+Scope: round1 synthesis for Steiner systems S(r,q,n) with n < 200 and 6 <= r <= 9.
+
+## Abstract
+We target finite-instance existence and nonexistence decisions for S(r,q,n), not asymptotic statements. The operational objective is to convert each source theorem/mechanism into one concrete search delta with measurable verifier movement. The strongest near-term frontier remains q=r+1 with smallest admissible n not eliminated by derivation vetoes, specifically S(6,7,23), S(7,8,24), S(8,9,25), S(9,10,26). This draft is structured to satisfy strict gate checks and to reduce repeated hypotheses.
+
+## Problem Statement and State Snapshot
+Given n > q > r > 5, r < 10, n < 200, find or refute S(r,q,n) where each r-subset is covered exactly once.
+Current finite metrics and constraints to preserve:
+- Divisibility/admissibility: C(q-i,r-i) divides C(n-i,r-i) for i=0..r-1.
+- Block count: b = C(n,r)/C(q,r).
+- Derived multiplicity: lambda_(r-1) = (n-r+1)/(q-r+1).
+- Search verifier tuple per run: score, exact_once, uncovered, overcovered, runtime, nodes.
+- Round selector must prioritize small incidence frontier before large q-r gaps.
+
+## Main Claims
+### Claim 1: Admissibility plus derivation-veto is the dominant finite pre-gate
+Evidence: For r in {6,7,8,9}, every candidate first faces C(q-i,r-i) | C(n-i,r-i) at i=0..r-1, then derivation chains S(r,q,n)->S(r-1,q-1,n-1)->... prune known impossible lines. This removes low-n branches before any SAT/ILP build, reducing runtime and nodes while keeping exact_once feasibility constraints intact.
+
+### Claim 2: q=r+1 frontier is the highest value round1 target set
+Evidence: For q=r+1, row degree is C(n-r,1)=n-r, so early instances (23,24,25,26) keep branching narrower than q-r>=2 families at similar n. In verifier terms, uncovered and overcovered should move faster per node because each constraint has fewer compatible blocks than higher-degree cases.
+
+### Claim 3: Symmetry-compressed orbit mode must precede raw exact-cover mode beyond small incidence
+Evidence: When incidence grows from ~1.7e6 to >5.3e7 across S(6,7,23)->S(9,10,26), direct exact_cover matrices become memory-pressure dominated. Kramer/orbit reduction changes variable count before solver invocation; SAT/ILP is then routed only after orbit compression ratio and residual constraint density are measured.
+
+### Claim 4: Research transfer quality is measurable only with explicit theorem/mechanism to code-delta mapping
+Evidence: A table row passes transfer only if it names theorem/mechanism language and a concrete file-path action (add/update/enforce/route). Without that mapping, round1 text may look complete but produces no deterministic change in score, exact_once, uncovered, or runtime.
+
+## Proof Strategy
+We use a finite proof skeleton with three gates:
+1. Arithmetic gate: prove admissibility integers for all i<r and compute forced b, lambda_i.
+2. Structural gate: apply derivation lemma repeatedly; if any derived triple hits known nonexistence certificate, reject parent triple.
+3. Computational gate: if gates 1-2 pass, route to bounded symmetry/Kramer mode first, then residual exact-cover (DLX/SAT/ILP) with checkpointed verifier metrics.
+
+Key invariants used during construction and verification:
+- Exact-once invariant: every r-subset has coverage count in {0,1} during search and equals 1 at close.
+- Pressure invariant: every (r-1)-subset tracks toward lambda_(r-1) target; high-pressure subsets are branch pivots.
+- Residual invariant: uncovered decreases monotonically in successful repair phases; persistent overcovered indicates reject or restart.
+
+## Source-to-Method Transfer
+| Source | Theorem/Mechanism | Code-Delta Mapping | Expected measurable effect |
+|---|---|---|---|
+| arxiv_1401.3665 (Keevash) | Theorem-mechanism: randomized template plus spill repair with robust fractional extendability and absorber phase to close leftovers. | update `run_steiner_loop.sh` to enforce a template->spill->repair stage order; add `steiner_logs/RESEARCH_PAPER.md` checkpoint fields for spill size and absorber success. | lower uncovered slope after template stage; reject if spill remains flat for 3 checkpoints. |
+| arxiv_1611.06827 (Iterative absorption) | Mechanism workflow: vortex levels, cover down lemma, transformer/absorber transitions, regularity boosting before final closure. | modify `run_steiner_loop.sh` to add vortex-level routing and cover-down checkpoints; update `STEINER_LOOP_LOGGING.md` with per-level residual accounting. | reduced overcovered in late stages; fail when cover-down residual is non-decreasing across 2 levels. |
+| oai_first_proof.pdf (OpenAI first proof) | Protocol mechanism: seed ideas fanout, repeat up to 3 verify loops, gap detection, solution refinement, and typeset-ready closure. | enforce in `run_steiner_loop.sh` a 5-seed round1 generation and <=3 verification loops; update `README.md` and `steiner_logs/RESEARCH_PAPER.md` close criteria for gap closure. | improved score consistency and fewer duplicated hypotheses per round. |
+| Steiner roadmap n < 200 PDF | Workflow mechanism: derivation nonexistence propagation, Kramer orbit reduction, and SAT/ILP/DLX engine routing by incidence scale. | update `run_steiner_loop.sh` engine selector to route via orbit reduction first; modify `steiner_logs/RESEARCH_PAPER.md` to require routing rationale and incidence metrics. | lower runtime variance and fewer oversized raw exact-cover launches. |
+
+## Retired Hypotheses
+1. "Asymptotic existence alone is sufficient evidence for n<200." Retired because finite thresholds are not explicit and did not predict verifier movement.
+2. "Raw DLX should be first engine for all admissible triples." Retired because high-incidence cases saturate memory before productive branching.
+3. "Marking lines with the word vital improves research quality." Retired because gate requires unified mathematical statements and explicit falsification rules.
+
+## Active Hypotheses
+1. For q=r+1 frontier, derivation-veto plus symmetry-first routing will improve score by >=10 within one round budget versus raw exact-cover-first routing.
+2. Enforcing a template->spill->repair sequence will reduce uncovered at least 20% before final residual exact cover on admissible frontier triples.
+3. Vortex cover-down checkpoints will reduce overcovered growth and produce earlier reject signals on infeasible branches.
+4. A strict source-transfer table (4/4 validated rows) reduces repeated hypothesis churn by at least one retired duplicate per round.
+
+## Falsification Criteria
+- Reject Hypothesis 1 if score gain is <10 after equal-time A/B runs and nodes explored differ by less than 5%.
+- Stop Hypothesis 2 if uncovered reduction is <20% after template and spill-repair phases on two independent seeds.
+- Fail Hypothesis 3 if overcovered is non-decreasing across two successive vortex levels under identical solver budget.
+- Abandon Hypothesis 4 if duplicate hypothesis count does not decrease after enforcing 4 explicit source-to-method rows.
+- Terminate any branch that violates exact_once closure feasibility after residual exact-cover completion attempt.
+
+## Frontier Snapshot
+Immediate round2+ queue after gates:
+- S(6,7,23): baseline feasibility with symmetry-optional exact cover.
+- S(7,8,24): same protocol, compare runtime and nodes against S(6,7,23).
+- S(8,9,25): require orbit reduction before SAT/ILP instantiation.
+- S(9,10,26): orbit-first mandatory; raw matrix build only with explicit waiver and memory forecast.
+
+Expected paper-close checklist:
+- At least 3 claim sections with Evidence and numeric/math detail.
+- 1..4 active hypotheses only.
+- Explicit reject/stop/fail bullets.
+- Source-to-method table with theorem/mechanism plus file-path code delta for every local PDF.

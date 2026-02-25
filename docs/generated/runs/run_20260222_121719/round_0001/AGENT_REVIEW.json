@@ -1,0 +1,26 @@
+{
+  "generated_utc": "2026-02-22T13:37:28.122866+00:00",
+  "mode": "research",
+  "passed": true,
+  "reviewers": {
+    "skeptic": {
+      "finding_count": 0,
+      "findings": [],
+      "passed": true
+    },
+    "verifier": {
+      "finding_count": 0,
+      "findings": [],
+      "metrics": {
+        "active_hypotheses": 4,
+        "required_source_count": 4,
+        "retired_hypotheses": 4,
+        "validated_source_count": 4
+      },
+      "passed": true
+    }
+  },
+  "round": 1,
+  "round_id": "round_0001",
+  "run_id": "20260222_121719"
+}

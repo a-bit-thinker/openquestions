@@ -1,0 +1,15 @@
+{
+  "closed_at": "2026-02-22T06:12:42.943083+00:00",
+  "created_at": "2026-02-22T05:54:54.850748+00:00",
+  "hypothesis": "Use cached knowledge first; minimal repeated search",
+  "instance": {
+    "expected_blocks": 43263,
+    "n": 24,
+    "q": 8,
+    "r": 7
+  },
+  "objective": "Construct S(7,8,24) with highest verifier score",
+  "parent_round_id": null,
+  "round_id": "round_0003",
+  "status": "closed"
+}

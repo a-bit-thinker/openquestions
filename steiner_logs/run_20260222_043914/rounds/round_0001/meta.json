@@ -1,0 +1,15 @@
+{
+  "closed_at": "2026-02-22T04:39:15.075728+00:00",
+  "created_at": "2026-02-22T04:39:15.040093+00:00",
+  "hypothesis": "Collect references and derivable tactics before construction",
+  "instance": {
+    "expected_blocks": 16965,
+    "n": 29,
+    "q": 8,
+    "r": 6
+  },
+  "objective": "Research-first round: build Large Steiner Systems knowledge cache",
+  "parent_round_id": null,
+  "round_id": "round_0001",
+  "status": "closed"
+}

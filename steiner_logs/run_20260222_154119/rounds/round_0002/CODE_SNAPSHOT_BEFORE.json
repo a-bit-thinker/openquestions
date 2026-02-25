@@ -1,0 +1,655 @@
+{
+  "files": [
+    {
+      "line_count": 98,
+      "path": "README.md",
+      "sha256": "a951a6c76a6a61ae07f853833d17e17368cc5608cff1e6b85f4dbf23c40edede",
+      "size_bytes": 3229
+    },
+    {
+      "line_count": 188,
+      "path": "STEINER_LOOP_LOGGING.md",
+      "sha256": "a58dc9449ac8edb4f632c0169cb051e824983af8154f155658e3cfced7cfe15f",
+      "size_bytes": 6520
+    },
+    {
+      "line_count": 32,
+      "path": "docs/INDEX.md",
+      "sha256": "67cae9d25fef4239893e2496175e83cfafe4310b9cd555ac04d9a9452a27db4b",
+      "size_bytes": 1393
+    },
+    {
+      "line_count": 17,
+      "path": "docs/core/ARCHITECTURE.md",
+      "sha256": "95ca8322c5667c4b9d9fcd8d5888caccdbd2ccdc1243504d97469eeeae9ece7e",
+      "size_bytes": 576
+    },
+    {
+      "line_count": 9,
+      "path": "docs/core/CORE_BELIEFS.md",
+      "sha256": "e954c2775dfd040c73ce0b129e8a00fb969c326909964059559d4ae5954360b3",
+      "size_bytes": 542
+    },
+    {
+      "line_count": 21,
+      "path": "docs/core/LOOP_CONTRACT.md",
+      "sha256": "f95dbb3e30f61b144fa312c6d4c031528f2e0f07ee1189b8130d11d2ebc33e35",
+      "size_bytes": 839
+    },
+    {
+      "line_count": 22,
+      "path": "docs/instances/FRONTIER_QUEUE.yaml",
+      "sha256": "8535ffe3968d859c3d75b1138c24b3ea55b409e9b35f86f5442c3f6c7ef8004a",
+      "size_bytes": 668
+    },
+    {
+      "line_count": 74,
+      "path": "docs/instances/INSTANCE_REGISTRY.yaml",
+      "sha256": "614b0a98f9f8c9617ac58e1cde9a8cfcaa03b3c80873a24e9d7dd72430179f90",
+      "size_bytes": 2092
+    },
+    {
+      "line_count": 43,
+      "path": "docs/knowledge/CLAIMS.yaml",
+      "sha256": "45acf5bdea6a00ea83af42da35424e3ac11f53619869973acfdab4c7923a3fe9",
+      "size_bytes": 1542
+    },
+    {
+      "line_count": 34,
+      "path": "docs/knowledge/HYPOTHESES_ACTIVE.yaml",
+      "sha256": "5b0457435033200517936d459e7c8416e23023c2c77357b9fde25cbc87016eb0",
+      "size_bytes": 1690
+    },
+    {
+      "line_count": 22,
+      "path": "docs/knowledge/HYPOTHESES_RETIRED.yaml",
+      "sha256": "6d66d70d324df03f1a08cc1d01eb446e68b7c759c725e61cd275faeba622548b",
+      "size_bytes": 1001
+    },
+    {
+      "line_count": 30,
+      "path": "docs/knowledge/NONEXISTENCE_CERTIFICATES.yaml",
+      "sha256": "eeeacee4d3662beabb27151f9cac1e7db1b1d4105b0f499429eab240c4fe6683",
+      "size_bytes": 1040
+    },
+    {
+      "line_count": 18,
+      "path": "docs/knowledge/SOURCES_INDEX.md",
+      "sha256": "fba4b810dbe0066c4838770a3eeaba2a22596cdb229000fcc79878b182267e94",
+      "size_bytes": 761
+    },
+    {
+      "line_count": 113,
+      "path": "docs/knowledge/SOURCE_TRANSFER.yaml",
+      "sha256": "6e79092956738e2751f9dfc6c9f8ee4ddb937fddfd6bdeb7a0e0c302cdb789c5",
+      "size_bytes": 4010
+    },
+    {
+      "line_count": 15,
+      "path": "docs/methods/ENGINE_SELECTOR.md",
+      "sha256": "ef10991051ad447019d7996d79c7db3d89f0006e2163dd5aff0699e491cf0638",
+      "size_bytes": 597
+    },
+    {
+      "line_count": 18,
+      "path": "docs/methods/PROOF_PLAYBOOK.md",
+      "sha256": "2d0446d8654d8a5d9e46c176b073fcd64ed4a9f7d7e7f69802a4e58d104a8c6c",
+      "size_bytes": 555
+    },
+    {
+      "line_count": 20,
+      "path": "docs/methods/SOLVER_PLAYBOOK.md",
+      "sha256": "eab30a099e83a15ab050484925c045731c2669db966f4fb3ca3274449c8b4196",
+      "size_bytes": 621
+    },
+    {
+      "line_count": 14,
+      "path": "docs/plans/TECH_DEBT.md",
+      "sha256": "78ca758c3eea19dd3ac57c1b358d04d02faef8b412b1c3a85697eb8adfccb219",
+      "size_bytes": 605
+    },
+    {
+      "line_count": 11,
+      "path": "docs/plans/active/README.md",
+      "sha256": "c54695911fda255856b5a6350e78a218bfed79cea7c482ffb0e95bb1a63ca127",
+      "size_bytes": 210
+    },
+    {
+      "line_count": 4,
+      "path": "docs/plans/completed/README.md",
+      "sha256": "c000d01c9d1fc0f2213f6e6d8c270b047ffcfca78cfb546bb4d3a39bad8453a3",
+      "size_bytes": 127
+    },
+    {
+      "line_count": 11,
+      "path": "docs/problem/ADMISSIBILITY_RULES.md",
+      "sha256": "690fe598df4f12fa23e2d16bb8cdf6060e554661a32b26f8361982e21bb1821c",
+      "size_bytes": 319
+    },
+    {
+      "line_count": 13,
+      "path": "docs/problem/DERIVATION_RULES.md",
+      "sha256": "c5d7f1a4e099c38c3b2c976a70322759acceb91cd39942f05c4a7212860262fe",
+      "size_bytes": 484
+    },
+    {
+      "line_count": 11,
+      "path": "docs/problem/STEINER_DOMAIN.md",
+      "sha256": "3f8e50fc69a6de06ca717653fa09b9d79da4cd4e5d7a3b8a636159c5508def9e",
+      "size_bytes": 316
+    },
+    {
+      "line_count": 48,
+      "path": "docs/quality/GATE_SPEC.md",
+      "sha256": "204ec202a78a091681c1e027c12eba9af883ea4dec6dac05068b9238900c9992",
+      "size_bytes": 1707
+    },
+    {
+      "line_count": 16,
+      "path": "docs/quality/REVIEW_CHECKLIST.md",
+      "sha256": "6b9c5ba98f00a06079c2a41c7af78ce3b92f7601e58bbdd28192c6ae3b0b0d26",
+      "size_bytes": 621
+    },
+    {
+      "line_count": 23,
+      "path": "docs/quality/SCORECARD.yaml",
+      "sha256": "03c122b8d4a25bc60e6812b3c6fdcb6b2f6456857638fcbd721c72d6f08d7df1",
+      "size_bytes": 609
+    },
+    {
+      "line_count": 8,
+      "path": "docs/schemas/README.md",
+      "sha256": "96339dcdab922eecb95dd9da4f179e7632876eb002d0361b359301bb6f78142d",
+      "size_bytes": 226
+    },
+    {
+      "line_count": 27,
+      "path": "docs/schemas/claims.schema.json",
+      "sha256": "bfb1a0e86f437ac7bbffd568f26e7f124ba5b71de989c1049767565d6d1a108f",
+      "size_bytes": 907
+    },
+    {
+      "line_count": 25,
+      "path": "docs/schemas/frontier_queue.schema.json",
+      "sha256": "a8ada8f95502df10676b763061a282a42653a51b81ee4e0121b9d858ad2f53f0",
+      "size_bytes": 731
+    },
+    {
+      "line_count": 29,
+      "path": "docs/schemas/hypotheses.schema.json",
+      "sha256": "82c8c5204d02f2a6a5a37f66c58fdcd39c6a3f4e2d8e75a4d23f6a10164cc44c",
+      "size_bytes": 988
+    },
+    {
+      "line_count": 36,
+      "path": "docs/schemas/instance_registry.schema.json",
+      "sha256": "4879eb723c6fc99ff05693da86f5eb749ceeb9d6e5d7394ae35903464e384a3a",
+      "size_bytes": 1081
+    },
+    {
+      "line_count": 28,
+      "path": "docs/schemas/nonexistence_certificates.schema.json",
+      "sha256": "4a825e1b32a0a9005e0e81a769b5386a641fac65e115c5d5dd2409d7e931ec31",
+      "size_bytes": 1131
+    },
+    {
+      "line_count": 20,
+      "path": "docs/schemas/run_facts.schema.json",
+      "sha256": "2a01767fc7b9f275ec6be1999daef685d0056bf3e13564b443344527cd5e0b8a",
+      "size_bytes": 769
+    },
+    {
+      "line_count": 14,
+      "path": "docs/schemas/scorecard.schema.json",
+      "sha256": "d8f8644fe54e2a8805264df073c7ba768ca46d9092a880de78a0f073673e7c53",
+      "size_bytes": 463
+    },
+    {
+      "line_count": 45,
+      "path": "docs/schemas/source_transfer.schema.json",
+      "sha256": "83e737cc37e3952fbe5df12abcf0976278aea24bd134fed717f11fcbdbb44737",
+      "size_bytes": 1838
+    },
+    {
+      "line_count": 98,
+      "path": "math_proofs/README.md",
+      "sha256": "ad55786a387ebfef7ece590937394474d8e9cca8662737636d1b139ccd123072",
+      "size_bytes": 3474
+    },
+    {
+      "line_count": 0,
+      "path": "math_proofs/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "line_count": null,
+      "path": "math_proofs/__pycache__/__init__.cpython-311.pyc",
+      "sha256": "a5fe0edd9eaaa7ae593af42fa3e12e7a489807d05f0f7d2f47005cb75f342420",
+      "size_bytes": 152
+    },
+    {
+      "line_count": null,
+      "path": "math_proofs/__pycache__/agent_review.cpython-311.pyc",
+      "sha256": "fc5a6d4761dcda04752300b12a56a7aaeb017be917885c8c7ee4068ad54b978d",
+      "size_bytes": 28016
+    },
+    {
+      "line_count": null,
+      "path": "math_proofs/__pycache__/code_change_audit.cpython-311.pyc",
+      "sha256": "eb8b32e8226382724822133d0004912cb68e18777463e76b944f6e719cec828b",
+      "size_bytes": 16481
+    },
+    {
+      "line_count": null,
+      "path": "math_proofs/__pycache__/docs_dual_write.cpython-311.pyc",
+      "sha256": "c4f987105ed7f915301f687b6797100dc88149be5fdde47e34b7ba0f4a1c0c47",
+      "size_bytes": 25731
+    },
+    {
+      "line_count": null,
+      "path": "math_proofs/__pycache__/docs_gate.cpython-311.pyc",
+      "sha256": "c3ead28fd4de07efc3928e06e9319f577df35efb877004cecf0d4be372d759de",
+      "size_bytes": 30212
+    },
+    {
+      "line_count": null,
+      "path": "math_proofs/__pycache__/fermat_little_theorem.cpython-311.pyc",
+      "sha256": "c04cd2cdb422a2586ced8292810349e620dac0ce9126feb554492d44f4d7073a",
+      "size_bytes": 4094
+    },
+    {
+      "line_count": null,
+      "path": "math_proofs/__pycache__/pdf_text_extract.cpython-311.pyc",
+      "sha256": "47ccc3e4c29dfb8cdd311167a544c5ab12e3b80c2688496e10ecfc025563697d",
+      "size_bytes": 22084
+    },
+    {
+      "line_count": null,
+      "path": "math_proofs/__pycache__/review_reconcile.cpython-311.pyc",
+      "sha256": "40e7cc5a00c10ee10d1c93c2505cc39b22a6dda222d6f797260d1c483ded7d05",
+      "size_bytes": 12149
+    },
+    {
+      "line_count": null,
+      "path": "math_proofs/__pycache__/steiner_exact_cover.cpython-311.pyc",
+      "sha256": "3a285c37bc124c9ec5c2ef59adcb2ff651f333bc3293af9d8f28a9438ed46f9c",
+      "size_bytes": 25589
+    },
+    {
+      "line_count": null,
+      "path": "math_proofs/__pycache__/steiner_portfolio.cpython-311.pyc",
+      "sha256": "68e28b920743f04e0505d5ad06ca9c64610df6bf9ae502d2f9329ee4af1df0b8",
+      "size_bytes": 21545
+    },
+    {
+      "line_count": null,
+      "path": "math_proofs/__pycache__/steiner_residual_repair.cpython-311.pyc",
+      "sha256": "cc3332ffc63848b05a2d28b6c913117068d1bcd5a60fe62def6abe5fc79943b4",
+      "size_bytes": 17300
+    },
+    {
+      "line_count": null,
+      "path": "math_proofs/__pycache__/steiner_round_logger.cpython-311.pyc",
+      "sha256": "62670d6ba796e8558a1c70e13da15564dc9d831a939432b51d82cbad16da5e7c",
+      "size_bytes": 21228
+    },
+    {
+      "line_count": null,
+      "path": "math_proofs/__pycache__/steiner_system.cpython-311.pyc",
+      "sha256": "5d7dd409b8db3e3ebd860a8bfb20cd14d2f33b585aedd740919135c36f05b057",
+      "size_bytes": 23689
+    },
+    {
+      "line_count": null,
+      "path": "math_proofs/__pycache__/test_agent_review.cpython-311.pyc",
+      "sha256": "a9c2131bf3bdf20eae6bdc28ebe4ec3ad43ecfa7fc8c8851bad43f6ec97e2699",
+      "size_bytes": 10259
+    },
+    {
+      "line_count": null,
+      "path": "math_proofs/__pycache__/test_code_change_audit.cpython-311.pyc",
+      "sha256": "4bbc52600db998d3e288d265be2fa6f0b91055cf5d97f7ff5cd5a808243695a8",
+      "size_bytes": 4872
+    },
+    {
+      "line_count": null,
+      "path": "math_proofs/__pycache__/test_docs_dual_write.cpython-311.pyc",
+      "sha256": "527db380bfc0b65929608c3b4403bdcc34fa6e0fb474cff71c4991e7e1b3d208",
+      "size_bytes": 7745
+    },
+    {
+      "line_count": null,
+      "path": "math_proofs/__pycache__/test_docs_gate.cpython-311.pyc",
+      "sha256": "ee17c08b7390d34d42533ba87c8f1d15c2cd0c2ba410b76a460028b9a927b4dc",
+      "size_bytes": 9851
+    },
+    {
+      "line_count": null,
+      "path": "math_proofs/__pycache__/test_fermat_little_theorem.cpython-311.pyc",
+      "sha256": "952954593bf2abc65664158bedead54e5ed02f5bc7ee1129c0f2dec111ddacac",
+      "size_bytes": 3003
+    },
+    {
+      "line_count": null,
+      "path": "math_proofs/__pycache__/test_frontiermath_specs.cpython-311.pyc",
+      "sha256": "3c5981d40101769a176e4437f8e90bf719f36b5cb42cca36fdf12c5bce689930",
+      "size_bytes": 4239
+    },
+    {
+      "line_count": null,
+      "path": "math_proofs/__pycache__/test_pdf_text_extract.cpython-311.pyc",
+      "sha256": "39caa877b7e02113656c1b699b3c20aab14e6543d73c340fbce17597eab46dd5",
+      "size_bytes": 4153
+    },
+    {
+      "line_count": null,
+      "path": "math_proofs/__pycache__/test_review_reconcile.cpython-311.pyc",
+      "sha256": "fec204ba3135821e70842da851f87570f3a637c9bd14f6dff1d37658e5ae00e0",
+      "size_bytes": 2770
+    },
+    {
+      "line_count": null,
+      "path": "math_proofs/__pycache__/test_steiner_exact_cover.cpython-311.pyc",
+      "sha256": "2ca048fdc9d5864660991e7502ba673e76eb65826ef7f91ed3dab2d3f9ee7af7",
+      "size_bytes": 3188
+    },
+    {
+      "line_count": null,
+      "path": "math_proofs/__pycache__/test_steiner_portfolio.cpython-311.pyc",
+      "sha256": "71b982e63f4533bf434842448bce92677f44aa02737c62757c26fab7aa2da8c1",
+      "size_bytes": 5434
+    },
+    {
+      "line_count": null,
+      "path": "math_proofs/__pycache__/test_steiner_residual_repair.cpython-311.pyc",
+      "sha256": "82671f70c55c13ee4983c4beefed24af398f28823e96d64078516073100d72a0",
+      "size_bytes": 2923
+    },
+    {
+      "line_count": null,
+      "path": "math_proofs/__pycache__/test_steiner_round_logger.cpython-311.pyc",
+      "sha256": "70a5c9181a330ee685968048557b256aa30bf509f9732dcf649f9268dbe743fe",
+      "size_bytes": 4155
+    },
+    {
+      "line_count": null,
+      "path": "math_proofs/__pycache__/test_steiner_system.cpython-311.pyc",
+      "sha256": "9e6cc805048500700c2041199a637fe1f02b57ac381f05fdf0533d43b490666b",
+      "size_bytes": 10342
+    },
+    {
+      "line_count": 500,
+      "path": "math_proofs/agent_review.py",
+      "sha256": "8a9f1ce48b57301352d88e77b946a35b1c9338659289f5444527391662a2b107",
+      "size_bytes": 18588
+    },
+    {
+      "line_count": 322,
+      "path": "math_proofs/code_change_audit.py",
+      "sha256": "552f95cef2fa62518895a1e60135a1eb457e7b95014dab5ee0ea7ecd2eafa1bd",
+      "size_bytes": 10256
+    },
+    {
+      "line_count": 479,
+      "path": "math_proofs/docs_dual_write.py",
+      "sha256": "f05bc406e1fd9080fa1c9e96005c1d6eaa000f26e068a4f181c249549e2c2358",
+      "size_bytes": 16507
+    },
+    {
+      "line_count": 533,
+      "path": "math_proofs/docs_gate.py",
+      "sha256": "5278508fb62f862e63c79877aaa5d8c935d3833f7cee8d30c59cd0ab60c71a1b",
+      "size_bytes": 20648
+    },
+    {
+      "line_count": 92,
+      "path": "math_proofs/fermat_little_theorem.py",
+      "sha256": "531022444e151c820669f831c3148aa9c27a1c150b05eddb10f7b23fe880c84b",
+      "size_bytes": 2733
+    },
+    {
+      "line_count": 100,
+      "path": "math_proofs/frontiermath_open_problems_assessment.md",
+      "sha256": "90e3a443411b1ba282aeffb7069549500b14a8719982cebb023076af45885050",
+      "size_bytes": 5851
+    },
+    {
+      "line_count": 39,
+      "path": "math_proofs/frontiermath_specs/01_ramsey_numbers_for_book_graphs.md",
+      "sha256": "5a2a4d240c31e879f58a33f291e8c3eaee850e9d27703fe571ffe714604b080c",
+      "size_bytes": 1392
+    },
+    {
+      "line_count": 39,
+      "path": "math_proofs/frontiermath_specs/02_ramsey_style_problem_on_hypergraphs.md",
+      "sha256": "6193a9757ca30d27363471200560807bb24b51a690d6ec0fc8da599788700837",
+      "size_bytes": 1312
+    },
+    {
+      "line_count": 39,
+      "path": "math_proofs/frontiermath_specs/03_arithmetic_kakeya_conjecture.md",
+      "sha256": "8cbd8f92342dbaac80ac1bd2e2707b98a4adcf71fe87a5562e0154546d3ca312",
+      "size_bytes": 1365
+    },
+    {
+      "line_count": 39,
+      "path": "math_proofs/frontiermath_specs/04_degree_vs_sensitivity_boolean_functions.md",
+      "sha256": "146bf352c7b08b2933b326b3aea144802189e19f3073597502ce6b6b03d84f73",
+      "size_bytes": 1365
+    },
+    {
+      "line_count": 39,
+      "path": "math_proofs/frontiermath_specs/05_explicit_deformations_of_algebras.md",
+      "sha256": "6271570075b1176f88264157558c460ee4a2d99aa0ec324b1cef808f43c06d42",
+      "size_bytes": 1343
+    },
+    {
+      "line_count": 39,
+      "path": "math_proofs/frontiermath_specs/06_surface_with_high_number_of_singularities.md",
+      "sha256": "9bbd832df81c197edd75abcdca306ed42e1d78c904ee683870ba5d2b45991d12",
+      "size_bytes": 1357
+    },
+    {
+      "line_count": 39,
+      "path": "math_proofs/frontiermath_specs/07_large_steiner_systems.md",
+      "sha256": "38db597f1f59fbf45dc12a201ff8ecb3f40b8900583bec1aba7ec84f07707cb7",
+      "size_bytes": 1322
+    },
+    {
+      "line_count": 39,
+      "path": "math_proofs/frontiermath_specs/08_2adic_absolute_galois_group.md",
+      "sha256": "168e2cc27ad5b281a9d6264e86f05cab77cc2d42f7117495e69ca5c1f9cf4475",
+      "size_bytes": 1350
+    },
+    {
+      "line_count": 39,
+      "path": "math_proofs/frontiermath_specs/09_inverse_galois_m23.md",
+      "sha256": "c5a6e8b78a9f186872fc4e4a935ce4d0dff7f0a20596c7d5209af1e19811561b",
+      "size_bytes": 1274
+    },
+    {
+      "line_count": 39,
+      "path": "math_proofs/frontiermath_specs/10_stretched_lr_coefficients.md",
+      "sha256": "ecad6ca3761c398bd9d80675885c5c3a852948a9c7922ce3e6c772d9848be0c6",
+      "size_bytes": 1365
+    },
+    {
+      "line_count": 39,
+      "path": "math_proofs/frontiermath_specs/11_symplectic_ball_packing.md",
+      "sha256": "630c6b3f75f8774bfabff1778656222e961bbd3021fbdd3c061cdfd410152417",
+      "size_bytes": 1319
+    },
+    {
+      "line_count": 39,
+      "path": "math_proofs/frontiermath_specs/12_apery_style_irrationality_proofs.md",
+      "sha256": "2ec6641143f7319169c42aa283151ddb67462b7eea8f9951198a025ad38b60bc",
+      "size_bytes": 1363
+    },
+    {
+      "line_count": 39,
+      "path": "math_proofs/frontiermath_specs/13_prime_factorization_gnfs_constant.md",
+      "sha256": "472c300f9de4f8b623516467682c4ac10cd28571dfba761c8f30bf4ed33f75d5",
+      "size_bytes": 1344
+    },
+    {
+      "line_count": 39,
+      "path": "math_proofs/frontiermath_specs/14_unknotting_number_equals_one.md",
+      "sha256": "ecdc505ae08ad067ae1f0ce4f260cc7e1adadf281b2a07f24385c25a43a29934",
+      "size_bytes": 1264
+    },
+    {
+      "line_count": 39,
+      "path": "math_proofs/frontiermath_specs/README.md",
+      "sha256": "24773831119265b7d7624a0be730022de0aa1d101dda9bc9c7cfec9bdbcc1cd6",
+      "size_bytes": 1907
+    },
+    {
+      "line_count": 25,
+      "path": "math_proofs/frontiermath_specs/SCORES.md",
+      "sha256": "2331ff1f841612eafddd896f9bbce8c646452f508ca487440b272cb226a9f798",
+      "size_bytes": 2234
+    },
+    {
+      "line_count": 15,
+      "path": "math_proofs/frontiermath_specs/scores.csv",
+      "sha256": "bd2a3f3903c7b79961670baaffeaec6137c9f7eae33ece8b4d89ce4b90363cab",
+      "size_bytes": 1096
+    },
+    {
+      "line_count": 443,
+      "path": "math_proofs/pdf_text_extract.py",
+      "sha256": "4af90a3a6dacd4c5312d97c07e2f8f6026badb7113f972a9f1a28d5cfdafb952",
+      "size_bytes": 14196
+    },
+    {
+      "line_count": 211,
+      "path": "math_proofs/review_reconcile.py",
+      "sha256": "1c23261188370a5c5f9da4bdc3773dc95f00fa9d5b98454b3d212fe41b83978e",
+      "size_bytes": 7374
+    },
+    {
+      "line_count": 578,
+      "path": "math_proofs/steiner_exact_cover.py",
+      "sha256": "69fadb4ab5b7508154b4c2e01db5d8ea6352f950089a3cc8478242f5efdee2f4",
+      "size_bytes": 19734
+    },
+    {
+      "line_count": 459,
+      "path": "math_proofs/steiner_portfolio.py",
+      "sha256": "b6448d0cfc2c3b849cbc14ea433bf898189374918f9405c878535d88145f391a",
+      "size_bytes": 15009
+    },
+    {
+      "line_count": 385,
+      "path": "math_proofs/steiner_residual_repair.py",
+      "sha256": "b351576ac36a04086d1643f20c2aac394f0ed4e7576710364f952a543c68387a",
+      "size_bytes": 13111
+    },
+    {
+      "line_count": 376,
+      "path": "math_proofs/steiner_round_logger.py",
+      "sha256": "01576b43e5cedb014c3ff5ffd6532ea8a93861783ab90fb15130c1a62ebaa445",
+      "size_bytes": 14605
+    },
+    {
+      "line_count": 509,
+      "path": "math_proofs/steiner_system.py",
+      "sha256": "43ad9b1a43e26a8e08e9d4b80af5c845dee01fa94dc594bf315ef73def146859",
+      "size_bytes": 19135
+    },
+    {
+      "line_count": 236,
+      "path": "math_proofs/test_agent_review.py",
+      "sha256": "b3e6c9091474e59ba14f96a25b1f74a6ea1a693ac3674c927a36a55558132fd3",
+      "size_bytes": 10457
+    },
+    {
+      "line_count": 74,
+      "path": "math_proofs/test_code_change_audit.py",
+      "sha256": "8dbe295b6f73dce4a19c59a4a532850488ce721d4047a9a32192e0dcb822c960",
+      "size_bytes": 2769
+    },
+    {
+      "line_count": 151,
+      "path": "math_proofs/test_docs_dual_write.py",
+      "sha256": "4497e4dd1037a07871198c01dad5f98da4c4a47e35cf92140134b5429ed72356",
+      "size_bytes": 5894
+    },
+    {
+      "line_count": 244,
+      "path": "math_proofs/test_docs_gate.py",
+      "sha256": "4025a6af50b980f2533ddc50d1bb35a201d48c2951ef8599dfdc1a6d98fd90ed",
+      "size_bytes": 10190
+    },
+    {
+      "line_count": 39,
+      "path": "math_proofs/test_fermat_little_theorem.py",
+      "sha256": "b36539ac107240403e4434bd1d736e11ef527fcd6dfada19a5036debd8228e3e",
+      "size_bytes": 1170
+    },
+    {
+      "line_count": 59,
+      "path": "math_proofs/test_frontiermath_specs.py",
+      "sha256": "9a8e30247f74802a2217c7a9227f8620213f541509f7a1755c7066e4d591c934",
+      "size_bytes": 1819
+    },
+    {
+      "line_count": 45,
+      "path": "math_proofs/test_pdf_text_extract.py",
+      "sha256": "d670b44b86e3db0bd5ebf388154f81a93f0f27868a974abe8f2b3eccddce3bdf",
+      "size_bytes": 1507
+    },
+    {
+      "line_count": 61,
+      "path": "math_proofs/test_review_reconcile.py",
+      "sha256": "f872bb3109488367af9805c6e410103838e7db3de0716fb2808ccb8a8565f973",
+      "size_bytes": 2112
+    },
+    {
+      "line_count": 63,
+      "path": "math_proofs/test_steiner_exact_cover.py",
+      "sha256": "fbe662c6a08e51b6938e9661cd4b1cf265b7e3799c33c3b7bbedd9f8f485846e",
+      "size_bytes": 1825
+    },
+    {
+      "line_count": 101,
+      "path": "math_proofs/test_steiner_portfolio.py",
+      "sha256": "ebc5573c0d87f61c227e833fe91ecb8adf3268bd76df8edab60616b6ac2b4a32",
+      "size_bytes": 3441
+    },
+    {
+      "line_count": 60,
+      "path": "math_proofs/test_steiner_residual_repair.py",
+      "sha256": "426e29b912959d282365a2c79871a4d87a1b79a98158f5d4db4ec1d802a59d26",
+      "size_bytes": 1632
+    },
+    {
+      "line_count": 87,
+      "path": "math_proofs/test_steiner_round_logger.py",
+      "sha256": "a1722657ad5546d03efdf3b18e81987ad7119dfd76c11b0d5164faeb83d64424",
+      "size_bytes": 2673
+    },
+    {
+      "line_count": 163,
+      "path": "math_proofs/test_steiner_system.py",
+      "sha256": "d44492b6ffb4b13310a948240a5111f95309757dcbae21475ffedc5afcb8af80",
+      "size_bytes": 5695
+    },
+    {
+      "line_count": 3103,
+      "path": "run_steiner_loop.sh",
+      "sha256": "711641baedc39dc48d2e9b60361d4550fb3252621490edc8fc0ee14c1552c5fb",
+      "size_bytes": 109886
+    },
+    {
+      "line_count": 119,
+      "path": "run_steiner_round.sh",
+      "sha256": "7a00a8f3f015fed50f137b641a2d7590374b57b5dce95c559f2e5239063810ff",
+      "size_bytes": 2664
+    }
+  ],
+  "generated_utc": "2026-02-22T15:46:11.860112+00:00",
+  "repo_root": "/root/openquestions",
+  "version": 1
+}

@@ -1,0 +1,35 @@
+{
+  "generated_utc": "2026-02-22T15:39:47.868887+00:00",
+  "mode": "research",
+  "passed": false,
+  "reviewers": {
+    "skeptic": {
+      "finding_count": 6,
+      "findings": [
+        "Round1 research requires at least 4 source transfer delta rows (found 0).",
+        "Missing source transfer delta row for Keevash (arxiv_1401.3665).",
+        "Missing source transfer delta row for Iterative absorption (arxiv_1611.06827).",
+        "Missing source transfer delta row for OpenAI first proof (oai_first_proof.pdf).",
+        "Missing source transfer delta row for Steiner roadmap PDF.",
+        "Research paper missing: steiner_logs_smoke_gsfix/RESEARCH_PAPER.md"
+      ],
+      "passed": false
+    },
+    "verifier": {
+      "finding_count": 1,
+      "findings": [
+        "Round1 research requires non-empty SOURCE_TRANSFER_DELTAS entries."
+      ],
+      "metrics": {
+        "claim_delta_entries": 3,
+        "hypothesis_delta_entries": 4,
+        "metrics_rows_total": 7,
+        "source_delta_entries": 0
+      },
+      "passed": false
+    }
+  },
+  "round": 1,
+  "round_id": "round_0001",
+  "run_id": "20260222_smoke_gsfix"
+}

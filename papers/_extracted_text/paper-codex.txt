@@ -1,0 +1,173 @@
+# paper-codex: Research Log (No Code Changes)
+
+Date: 2026-02-22
+Workspace: /root/openquestions
+Scope: research synthesis only; no script/code edits in this turn.
+
+## 1) Inputs Read This Turn
+
+1. User-provided deep-research markdown note:
+   - "Computational and Theoretical Roadmap for Steiner Systems with Strength 6–9 and n < 200"
+2. Local extracted PDF text:
+   - /root/openquestions/papers/_extracted_text/oai_first_proof.pdftotext.txt
+3. Existing local paper corpus context already known from prior extraction:
+   - arxiv_1401.3665 (Keevash)
+   - arxiv_1611.06827 (iterative absorption)
+   - roadmap PDF extract in papers/_extracted_text
+
+## 2) High-Confidence Mathematical State (for n < 200, r in {6,7,8,9})
+
+### 2.1 Admissibility is mandatory and cheap
+The Steiner divisibility constraints
+C(q-i, r-i) | C(n-i, r-i) for i = 0..r-1
+remain the first hard gate. This should stay as an unconditional pre-solver filter.
+
+### 2.2 Small-n is not resolved by asymptotic existence theorems
+- Keevash and iterative-absorption results justify eventual existence under divisibility for large n.
+- They do not directly settle the concrete finite window n < 200 for most triples.
+- Therefore the loop must remain "finite-instance computational theorem proving", not asymptotic citation.
+
+### 2.3 Frontier structure from the roadmap note
+The research note reports 254 admissible triples in the target window and emphasizes q=r+1 frontier lines.
+The most practical unresolved starts remain:
+- S(6,7,23)
+- S(7,8,24)
+- S(8,9,25)
+- S(9,10,26)
+
+### 2.4 Nonexistence propagation remains central
+Derivation-veto propagation from known smaller nonexistence cases is a high-value elimination mechanism.
+This should be treated as a first-class certificate lane, not just a side remark.
+
+## 3) What oai_first_proof Adds to Loop Design (Important)
+
+From /root/openquestions/papers/_extracted_text/oai_first_proof.pdftotext.txt, the practical workflow pattern is:
+
+1. Generate a small set of strong seed ideas.
+2. Solve independently from each seed.
+3. Run bounded verify/revise loops (up to 3 rounds) with explicit gap checks.
+4. If checks pass, produce a final clean artifact.
+5. Use explicit prompt templates for idea generation, solving, verification, and refinement.
+
+This is useful for round1 because it prevents:
+- single-track hypothesis lock-in,
+- verbose but low-testability notes,
+- missing verification discipline.
+
+## 4) Codex 5.3 vs ChatGPT 5.2 Research-Mode Comparison (Operational)
+
+This comparison is framed for your loop objective (not general model ranking).
+
+### 4.1 Where 5.2-style deep research output is currently stronger
+- Produces broader literature maps and structured campaigns.
+- Better at external framing of theorem landscape + computational strategy menu.
+- Better long-form synthesis quality when asked for a paper-like survey.
+
+### 4.2 Where 5.3-style loop execution is currently stronger
+- Faster integration into local loop constraints and files.
+- Better at enforcing strict gates and maintaining reproducible run structure.
+- Better for iterative engineering tasks (prompt wiring, gating logic, log mechanics).
+
+### 4.3 Practical combined policy
+- Use 5.2 profile for round1 research synthesis generation.
+- Use 5.3 profile for rounds 2–5 solver operations and gate enforcement.
+- Keep one strict translation layer: every research claim must map to a concrete finite-instance search delta.
+
+## 5) Research-Grade Round1 Specification (No Code Edit; Content Standard)
+
+To avoid shallow summaries, round1 research output should include:
+
+1. A short theorem/mechanism table per source.
+2. One finite-instance impact statement per mechanism:
+   - which instance family it targets,
+   - which solver lane it modifies,
+   - expected measurable effect.
+3. One falsification protocol per active hypothesis:
+   - matched budget,
+   - stop condition,
+   - replacement rule.
+4. One retirement record for invalid hypotheses.
+
+Minimum source transfer set for current corpus:
+- Keevash: template/spill or robust-fractional/extendability interpretation for finite search heuristics.
+- Iterative absorption: vortex/cover-down/transformer decomposition translated into staged computational phases.
+- Roadmap paper: admissibility + derivation-veto + KM/SAT/ILP/DLX routing thresholds.
+- First Proof paper: 5-seed + 3-loop verify-revise discipline for round1 execution protocol.
+
+## 6) Recommended Finite-Search Campaign (Research Outcome)
+
+### Phase A: Hard filtering and certificates
+- Run divisibility gate.
+- Apply derivation-veto propagation.
+- Output explicit eliminated-triple ledger with reasons.
+
+### Phase B: Symmetry reduction lane
+- Attempt KM/orbit-compressed formulations first for candidate triples.
+- Track orbit compression ratio and coefficient profile.
+- Early-switch rule if non-binary/large coefficients make KM lane structurally weak.
+
+### Phase C: Exact/optimization lane
+- Route by reduced instance size:
+  - small: DLX/libexact,
+  - medium: SAT with strong exactly-one encoding,
+  - large: ILP/CP-SAT with symmetry cuts.
+- Maintain reproducible branch seeds and canonicalization for de-duplication.
+
+### Phase D: Hybrid closure lane
+- Build near-feasible partial structures with strict invariants.
+- Attempt residual exact completion only when residual thresholds are met.
+- Log negative results as reusable nonexistence/obstruction evidence.
+
+## 7) Metrics for Honest Model Comparison (5.3 vs 5.2)
+
+Use same instance/budget and compare:
+
+1. Research transfer quality:
+- source coverage completeness,
+- mechanism specificity,
+- testability score.
+
+2. Loop utility:
+- number of retired duplicated hypotheses,
+- reduction in repeated dead-end experiments,
+- improvement in decision latency for solver-lane switching.
+
+3. Solve impact:
+- exact_once delta,
+- uncovered delta,
+- overcovered control,
+- gain per compute-hour.
+
+4. Verification rigor:
+- % hypotheses with explicit falsification protocol,
+- % claims backed by concrete metrics in same round.
+
+## 8) Concrete Research Conclusions for Your Current Setup
+
+1. The new roadmap note is genuinely useful; it is not just background text.
+2. The first-proof workflow is directly applicable to round1 and should be treated as process infrastructure.
+3. The key unresolved risk is not lack of high-level theory; it is weak finite-instance translation discipline.
+4. Therefore, the dominant quality objective is:
+   "convert each paper mechanism into one measurable finite-search delta with a stop rule."
+
+## 9) Immediate Next Research Prompt (Ready-to-Use, No Code Changes)
+
+Use this in the next round1 research prompt body:
+
+- Generate exactly 5 seed hypotheses.
+- For each seed, provide:
+  - Source theorem/mechanism,
+  - finite-instance delta,
+  - expected metric movement,
+  - falsification stop condition.
+- Run at most 3 verify-revise loops.
+- Retire at least 1 duplicated/invalid hypothesis.
+- Output a final compact research paper section with:
+  - claims + evidence,
+  - source-to-method mapping table,
+  - prioritized one-round experiment plan.
+
+## 10) Integrity Note
+
+This log is based on explicit reading of local extracted texts (including oai_first_proof.pdftotext.txt and your roadmap content).
+No code/script changes were made in this turn. Only this research log file was written.

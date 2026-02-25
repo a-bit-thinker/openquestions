@@ -1,0 +1,839 @@
+Computational and Theoretical Roadmap for
+Steiner Systems with Strength 6–9 and n < 200
+Executive summary
+This report concerns Steiner systems in the modern sense: an S(r, q, n) is a collection of q -subsets
+(“blocks”) of [n] such that every r -subset of [n] is contained in exactly one block. Your parameter regime is
+n > q > r > 5, r ∈ {6, 7, 8, 9}, n < 200. This is the same as a r-(n, q, 1) design.       1
+
+
+
+
+Two modern asymptotic existence theorems dominate the theoretical landscape. The randomized-algebraic
+method of Peter Keevash 2 proves that, for fixed r, q , the standard divisibility conditions are sufficient for
+all sufficiently large n, but the proof is nonconstructive in the small-n range and does not provide a
+practical “n ≤ 200” threshold.     3   A second approach, the iterative-absorption proof of Stefan Glock         4
+
+and collaborators, solves the more general F -decomposition problem and provides an alternative existence
+proof for designs via absorption; it is likewise asymptotic.   5
+
+
+
+
+For n < 200, the primary actionable constraints are (i) admissibility (binomial/divisibility conditions), plus (ii)
+strong necessary lower bounds on n in terms of (r, q), and (iii) a small set of proven nonexistence results
+that eliminate the very smallest admissible cases. In particular, Patric R. J. Östergård 6 and Olli Pottonen
+  7  proved S(4, 5, 17) does not exist and (critically) this rules out all S(t, t + 1, t + 13) for t ≥ 4; this
+directly eliminates (r, q, n) = (6, 7, 19), (7, 8, 20), (8, 9, 21), (9, 10, 22) in your range.   8   Moreover, J. G.
+van der Pol   9   records additional nonexistences in the “q = r + 1” line, including S(5, 6, 16), which by
+repeated derivation eliminates (6, 7, 17), (7, 8, 18), (8, 9, 19), (9, 10, 20).    10
+
+
+
+
+Applying the standard divisibility conditions (for i = 0, … , r − 1) yields 254 admissible (r, q, n) triples
+with r ∈ {6, 7, 8, 9} and n < 200 (computed in this report via exhaustive checking of the divisibility
+conditions). Most admissible triples have q − r ∈ {1, 2, 3}; cases with larger q − r exist but are much
+larger and typically computationally intractable without heavy symmetry.          11
+
+
+
+
+The highest-priority computational targets (smallest exact-cover incidence sizes among admissible, not
+already eliminated) begin at:
+
+
+                             S(6, 7, 23), S(7, 8, 24), S(8, 9, 25), S(9, 10, 26),
+
+followed by slightly larger n on the same q = r + 1 line. These are “frontier” instances where asymptotic
+existence offers no guidance and the known nonexistence results have not eliminated them.            12
+
+
+
+
+                                                        1
+Mathematical constraints and parameter filtering
+
+Basic counting and induced parameters
+
+If an S(r, q, n) exists, the number of blocks is forced by counting r -subsets in two ways:
+
+
+                                                         (nr )
+                                                     b = q .
+                                                         (r )
+
+More generally, every i-subset of points is contained in exactly
+
+                                                    (n−i
+                                                     r−i )
+                                             λi =                  (0 ≤ i ≤ r)
+                                                    (q−i
+                                                     r−i)
+
+blocks (with λr = 1). These are standard design identities.           11
+
+
+
+
+A fundamental closure property is derivation: fixing a point x and deleting it from every block containing it
+yields an S(r − 1, q − 1, n − 1). Therefore, if S(r, q, n) exists then S(r − 1, q − 1, n − 1) must also exist.
+ 13   This “derivation veto” is a major nonexistence propagation tool in your range.
+
+
+Divisibility (admissibility) constraints
+
+The “natural divisibility conditions” (often called admissibility) are:
+
+                                   q−i     n−i
+                               (       )∣(     )           for all i = 0, 1, … , r − 1.
+                                   r−i     r−i
+
+These follow by forcing λi ∈ Z for every i < r .     11
+
+
+
+
+Because you require r ∈ {6, 7, 8, 9} and n < 200, admissibility is computationally cheap to check and
+should be the first sieve in any search pipeline. In this report, I exhaustively enumerated all triples with r ∈
+{6, 7, 8, 9}, r < q < n < 200 satisfying these divisibility conditions; the counts by (r, q − r) are shown
+below (computed here; the sieve itself is standard).       11
+
+
+
+
+         r    admissible with q − r = 1       q−r =2               q−r =3        q−r ≥4       total admissible
+
+         6                              44                13               8              2                67
+
+         7                              43                13               8              1                65
+
+         8                              43                13               6              1                63
+
+         9                              42                10               6              1                59
+
+
+Fisher–Ray–Chaudhuri–Wilson bounds and related lower bounds on n
+
+While divisibility is necessary, it is rarely sufficient for small n. Several classical inequalities provide
+additional necessary constraints.
+
+
+
+
+                                                               2
+The Ray–Chaudhuri–Wilson inequality generalizes Fisher-type lower bounds on the number of blocks b:
+                                                                v
+for a t-(v, k, λ) design, if t = 2s and v ≥ k + s then b ≥ (s); if t = 2s + 1 and v − 1 ≥ k + s then b ≥
+2(v−1
+    s ).
+          14 In the Steiner case (λ = 1), this typically yields strong growth pressure on b and hence on v =
+
+n, but for q = r + 1 it often becomes weaker than divisibility.
+
+Two additional lower bounds for nontrivial Steiner t-designs (here t = r , k = q , v = n) are:
+
+
+          • Tits bound: v ≥ (t + 1)(k − t + 1).     15
+
+          • Cameron bound: v − t + 1 ≥ (k − t + 2)(k − t + 1) for t > 2, with equality only in a short list of
+           small exceptional parameter sets.   15
+
+
+
+In your regime (especially q = r + 1), these bounds do not eliminate many admissible triples—yet they
+become important when considering stronger symmetry hypotheses or when q is substantially larger than
+r.   15
+
+
+
+
+Existence theory and construction paradigms
+
+Keevash’s theorem and the asymptotic–exact gap
+
+Keevash proves the long-standing “existence conjecture for designs”: for fixed r, q , the divisibility conditions
+are sufficient for the existence of r-(n, q, 1) designs for all sufficiently large n. The argument is framed
+more generally as clique decompositions in hypergraphs/simplicial complexes under pseudorandomness
+and extendability hypotheses, and it is nonconstructive at the scale of n < 200 (no explicit small thresholds
+are provided in the theorem’s general form).        16
+
+
+
+
+For your problem, the key implication is methodological rather than directly computational: admissibility is
+believed to be “nearly sufficient”, but small-n behavior remains dominated by sporadic obstructions and
+the absence of effective thresholds. This is exactly why n < 200 searches require a blend of (i) tight pruning
+and (ii) heavy computational backtracking / SAT / ILP.    17
+
+
+
+
+Iterative absorption and hypergraph decomposition
+
+The iterative-absorption theorem of Glock and collaborators establishes existence of decompositions of
+complete r -uniform hypergraphs (and much more general objects) into copies of a fixed r -uniform
+hypergraph F , assuming divisibility conditions and sufficiently large size. In the special case where F is a
+complete r -graph, this yields (another proof of) existence of block designs, driven by a probabilistic
+“absorption” mechanism.        5
+
+
+
+
+Practically, iterative absorption suggests algorithmic heuristics for construction-by-stages (build an almost-
+design, then absorb leftover constraints). However, turning the existence proof into an efficient
+implementation for n < 200 remains nontrivial; absorption methods are most useful as inspiration for
+hybrid search (heuristic near-solutions + exact completion).   18
+
+
+
+
+                                                         3
+Kramer–Mesner orbit method and prescribed automorphism groups
+
+The Kramer–Mesner method (often used as “orbit reduction”) is a computational framework for
+constructing t-designs with a prescribed automorphism group G. One computes the orbits of G on r -
+subsets (rows) and q -subsets (columns), forms the Kramer–Mesner incidence matrix A between orbit
+representatives, and solves
+
+
+                                                   Ax = 1
+
+over x ∈ {0, 1}#(column orbits) , where selecting a column-orbit corresponds to including all blocks in that
+orbit. The method originates in the 1976 paper of Earl S. Kramer 19 and Dale M. Mesner 20 .       21
+
+
+
+
+Modern, practical support exists in GAP tooling (notably the PAG package manual explicitly documents
+Kramer–Mesner style search workflows and related routines). 22 For n < 200, Kramer–Mesner is often
+essential: without symmetry, the raw exact cover instance can easily exceed memory/time, while a good
+choice of G can reduce the variable count by orders of magnitude.
+
+
+Recursive constructions, finite geometry, and difference methods
+
+Recursive constructions in design theory (e.g., via group-divisible designs and Wilson-type “fundamental
+construction” ideas) are powerful for generating infinite families of designs, but typically with λ > 1 or with
+parameters not matching Steiner λ = 1 at t ≥ 6. A key historical fact is that nontrivial t-designs exist for all
+t (Teirlinck), but these constructions generally produce very large λ and are not tuned for Steiner λ = 1.
+ 15 A more recent example of a general recursive design-construction framework is the paper of Tran van
+Trung 23 , which constructs simple t-designs for arbitrary t from ingredient designs by solving index
+equations.   24
+
+
+
+
+Finite geometry supplies many Steiner systems at small strength (notably t = 2, 3) and supplies high-
+symmetry templates (affine/projective planes, nets, etc.), which can still be useful in your regime through
+group choices for Kramer–Mesner and through “local geometry” heuristics. 25 Difference methods
+(difference sets/families, cyclic development) are especially useful as symmetry constraints: one searches
+for base blocks in a cyclic group and develops them to form a full design, converting the problem into
+difference covering constraints. Although this is most developed for t = 2 (e.g., cyclic S(2, 4, v) surveys),
+the methodology (“assume a regular cyclic action; search base blocks; lift to full block set”) generalizes as a
+computational heuristic for t > 2. 26
+
+
+Known small results and catalogs for r = 6–9 with n < 200
+
+What is actually known (and what is not)
+
+A central point—often easy to miss when starting from Keevash’s theorem—is that asymptotic existence
+does not translate into a usable catalog for n < 200. Van der Pol explicitly emphasizes that for S(r, r +
+1, n) at large r, results are scarce, and even though no S(6, 7, n) were known at the time of writing,
+Keevash implies such systems exist for sufficiently large n. 27
+
+
+
+
+                                                       4
+In the specific strengths r = 6, 7, 8, 9 and n < 200, the strongest published eliminations in the q = r + 1
+line come from:
+
+
+     • The nonexistence of S(4, 5, 17), which rules out S(t, t + 1, t + 13) for all t ≥ 4.      8
+
+     • Recorded nonexistence of S(5, 6, 16) (as tabulated by van der Pol), which by derivation rules out
+       S(t, t + 1, t + 11) for all t ≥ 5.   28
+
+     • Van der Pol’s table also explicitly lists the induced nonexistences S(6, 7, 17), S(7, 8, 18), S(8, 9, 19),
+       S(9, 10, 20) and the t + 13 nonexistences via the Östergård–Pottonen result.        29
+
+
+
+Beyond these, in the open literature surfaced by this research pass, there is no widely cited catalog that
+settles existence/nonexistence for most admissible S(r, q, n) with r ∈ {6, 7, 8, 9}, n < 200, especially
+when q > r + 1. Therefore, the majority of admissible cases in your window should be treated as open,
+subject to further literature integration and/or computation.    30
+
+
+
+
+Proven nonexistences in your parameter window via derivation vetoes
+
+The following cases are ruled out by the two base nonexistence results S(5, 6, 16) (tabulated) and
+S(4, 5, 17) (proved), propagated upward by repeated derivation.       29
+
+
+
+
+  strength r      block size q   points n        status         elimination source
+
+           6                7          17        nonexistence   derives to S(5, 6, 16) (tabulated)   28
+
+
+
+           6                7          19        nonexistence   S(t, t + 1, t + 13) rule from S(4, 5, 17)        8
+
+
+
+           7                8          18        nonexistence   derives to S(6, 7, 17) (tabulated)   28
+
+
+
+           7                8          20        nonexistence   S(t, t + 1, t + 13) rule   8
+
+
+
+           8                9          19        nonexistence   derives to S(5, 6, 16) (tabulated chain)    28
+
+
+
+           8                9          21        nonexistence   S(t, t + 1, t + 13) rule   8
+
+
+
+           9               10          20        nonexistence   derives to S(5, 6, 16) (tabulated chain)    28
+
+
+
+           9               10          22        nonexistence   S(t, t + 1, t + 13) rule   8
+
+
+
+A compact way to remember this: along the “classical” line q = r + 1, the first admissible n for each r ∈
+{6, 7, 8, 9} is eliminated twice (at offsets +11 and +13); the first not eliminated cases appear at n =
+23, 24, 25, 26 respectively.
+
+“Frontier” smallest admissible open cases (starting points)
+
+Using the admissibility sieve and removing the above derivation-based nonexistences, the smallest q =
+r + 1 candidates become:
+
+     • S(6, 7, 23)
+     • S(7, 8, 24)
+     • S(8, 9, 25)
+
+
+
+
+                                                          5
+      • S(9, 10, 26)
+
+These are the natural first computational experiments because they minimize the number of r -subset
+constraints and candidate blocks within each strength line (details below). The scarcity of known results for
+these families is emphasized in van der Pol’s discussion. 31
+
+
+Algorithmic search strategies and pruning heuristics
+This section treats construction as a constraint satisfaction / exact cover family of problems and lays out
+implementable search pipelines for n < 200.
+
+
+Kramer–Mesner orbit reduction (linear algebra / 0–1 feasibility)
+
+Core idea. Prescribe a permutation group G ≤ Sn acting on [n]. Let Or be the set of G-orbits on r -
+                                                                                    ∣Or ∣×∣Oq ∣
+subsets, and Oq the orbits on q -subsets. Form the orbit-incidence matrix A ∈ Z≥0                 , where Aij counts
+how many r -subsets in row-orbit i occur inside a representative block of column-orbit j . Solve Ax = 1 in
+x ∈ {0, 1}∣Oq ∣ ; each solution lifts to a G-invariant design.   21
+
+
+
+
+Complexity profile. - Orbit generation dominates when n grows: worst case behaves like enumerating
+subsets, but with strong G it can drop sharply. - Solving Ax = 1 is an NP-complete 0–1 feasibility problem
+in general; however, ∣Oq ∣ can become small enough for SAT/ILP/DLX solvers.    32
+
+
+
+
+Implementation notes. - Use GAP to define G, compute orbits, and assemble A; the PAG package is
+explicitly designed for “prescribed automorphism group” workflows and includes Kramer–Mesner search
+routines. 22 - Choose G from a menu of “likely” symmetry groups: cyclic Cn , dihedral D2n , affine groups
+AGL(1, p) when n is prime, small transitive groups, or subgroup chains that allow incremental symmetry
+breaking (start large, relax if no solutions). The usefulness of group actions for constructing high-t designs
+is a standard theme in the computational symmetry literature.         33
+
+
+
+
+Feasible parameter ranges (heuristic). - Without symmetry: orbit reduction gives no advantage. - With
+moderate symmetry (say ∣G∣ ≳ 103 and few orbits), you can sometimes handle n up to 100–200 for q close
+to r , because the orbit matrix becomes small even when the raw design is huge. This is precisely why
+Kramer–Mesner remains relevant in high-t work.        34
+
+
+
+
+Exact cover / DLX / libexact (with and without symmetry)
+
+Core encoding. Create a constraint row for each r -subset of [n]. Create a variable/choice column for each
+q -subset (“candidate block”). Put a 1 when the r-subset is contained in the block. Then an S(r, q, n) is
+exactly a set of blocks that covers every row exactly once—an exact cover instance. This framing is
+standard and is directly used in the proof-of-nonexistence search for S(4, 5, 17). 35
+
+
+Algorithm DLX. Knuth’s “Dancing Links” (Algorithm X implemented with a sparse linked structure) is a
+canonical exact cover enumerator; it uses reversible delete/undelete operations and typically branches on
+the currently “smallest” constraint. 36 The libexact library provides an engineered exact cover solver
+infrastructure. 37
+
+
+
+
+                                                           6
+Complexity profile. - Exponential time in the worst case (typical for exact cover and 0–1 CSP). 38 - Memory
+is proportional to the number of 1s in the incidence matrix when using DLX-style linked nodes; this is a
+practical limiter for n even when the solver is fast on pruned instances. 38
+
+
+Isomorph rejection. - To avoid enumerating designs related by permuting points, represent a partial
+design as a bipartite incidence graph (points–blocks) or as a block-intersection graph, then apply canonical
+labeling / automorphism computation via nauty/Traces. 39 - In practice, most DLX implementations
+benefit from a “seed-and-extend” approach: fix a small configuration (one or several blocks), solve the
+residual exact cover, and canonicalize seeds to avoid duplicates—this is exactly the structure of the
+S(4, 5, 17) nonexistence computation (“derived designs” + exhaustive exact cover). 40
+
+                                                                                                         n
+Feasible parameter ranges (heuristic, without strong symmetry). - In your window, the raw size of ( q )
+becomes enormous quickly. Therefore, direct exact cover without symmetry is realistic only for the smallest
+admissible cases and typically when q is close to r (especially q = r + 1). This aligns with where the
+literature has successfully executed exhaustive exact-cover work (e.g., S(4, 5, 17)).       40
+
+
+
+
+SAT encodings (CNF + cardinality constraints)
+
+Encoding. Introduce a Boolean variable xB for each candidate block B . For each r -subset R, enforce an
+exactly-one constraint:
+
+
+                                                 ∑ xB = 1.
+                                                B⊇R
+
+Implement “exactly one” as (i) at-least-one clause plus (ii) at-most-one encoding (pairwise, sequential
+counter, commander variables, or more modern PB encodings). SAT solvers are well suited as the at-most-
+one constraints create strong propagation if encoded well. 41
+
+
+Complexity profile. - SAT is NP-complete in general; performance depends heavily on propagation strength
+                                                                    d                 n−r
+and symmetry breaking. - Naive pairwise at-most-one grows as ∑R ( 2R ) where dR = ( q−r ) is the number
+of blocks containing a row R, which can be too large unless symmetry/orbit reduction is used.    42
+
+
+
+
+Implementation notes. - Use orbit compression first (Kramer–Mesner) so variables correspond to orbits
+rather than individual blocks; then “exactly-one” becomes a weighted constraint. This is one of the cleanest
+SAT uses in high-symmetry design search. 43 - Add symmetry breaking constraints: fix the
+lexicographically smallest block, impose canonical ordering on a small set of blocks, or constrain point
+labels (e.g., point 1 appears in a specified pattern of blocks). Symmetry breaking is essential because Sn
+symmetry otherwise yields huge equivalent search spaces.       44
+
+
+
+
+ILP / MIP / CP-SAT (integer programming formulations)
+
+Encoding. The same linear constraints ∑B⊇R xB = 1 with binary variables xB ∈ {0, 1} form a pure 0–1
+                      n
+ILP. Column count is ( q ) without symmetry; orbit reduction is crucial for large n.   45
+
+
+
+
+Solvers and when to use them. - CP-SAT (OR-Tools) is strong on structured 0–1 feasibility with many
+combinatorial constraints and supports callbacks and search control. 46 - Commercial MIP solvers (e.g.,
+
+
+
+
+                                                       7
+Gurobi, CPLEX) provide very strong presolve, cuts, and parallel branch-and-bound; open-source CBC is a
+flexible baseline. 47
+
+
+Practical notes. - Use lazy constraints / callbacks when symmetry-breaking constraints are generated
+dynamically (e.g., cut off isomorphic solutions discovered during search). This is standard MIP practice and
+is directly supported in CPLEX-style toolchains. 48 - For orbit variables, constraints often become small-
+integer equations rather than pure 0–1 in every row; choose a solver that supports integer coefficients
+robustly and can exploit presolve. 49
+
+
+Heuristics and metaheuristics (hill climbing, local repair, absorption-inspired)
+
+Why use them. For r ≥ 6, exact search can stall early. A useful intermediate objective is to construct a
+partial block set that nearly covers each r -subset exactly once (minimizing squared deviations), then switch
+to exact completion. This mirrors the “almost decomposition + absorption” philosophy in modern proofs.
+ 50
+
+
+
+
+Evidence base. Metaheuristics have been used historically for lower-t Steiner systems (e.g., genetic
+algorithms for Steiner triple systems), suggesting that heuristic seed generation can be effective even if the
+final certification requires exact solvers. 51
+
+
+Parallel / distributed search
+
+Core approach. Branch the search by fixing a seed (or a sequence of orbit choices) and farm subinstances
+to workers. This is natural for DLX and for SAT via assumptions. Distributed exact-cover architectures built
+around DLX-style branching are documented (e.g., systems designed explicitly to distribute Knuth-style DLX
+over many clients). 52
+
+
+Implementation notes (robust pattern). - Choose a canonical seed depth d s.t. the number of
+subinstances is large but each is manageable. - Save seeds and progress checkpoints; record unsat cores
+(SAT) or infeasibility certificates (MIP) when possible. - Use a canonicalization step at every seed (nauty/
+Traces) to prevent duplicated isomorphic subtrees. 53
+
+
+High-value pruning rules (apply early, apply often)
+
+These rules are “cheap-to-check, high-payoff” in r ≥ 6 search.
+
+                                                                q−i     n−i
+      • Divisibility sieve first (reject any (r, q, n) failing (r−i) ∣ ( r−i ) for some i < r ).   11
+
+      • Derivation veto: if any derived (r − s, q − s, n − s) matches a proven nonexistence, reject
+       immediately; this is exactly the logic used to turn S(4, 5, 17) nonexistence into the family
+       nonexistence S(t, t + 1, t + 13).       54
+
+      • Orbit-stabilizer reductions: when using symmetry G, work at orbit level and prefer groups yielding
+        few orbits (often transitive or nearly transitive groups). 43
+      • Block intersection cap: any two distinct blocks intersect in at most r − 1 points (otherwise they
+       share an r -subset, violating uniqueness). This is a strong adjacency restriction that can be enforced
+       as a compatibility graph for blocks in backtracking/SAT (forbid selecting two blocks with intersection
+       ≥ r). 55
+
+
+
+                                                           8
+     • Row-degree ordering (DLX heuristic): always branch on an uncovered r -subset whose remaining
+       compatible blocks are fewest. This is the standard “choose smallest column” heuristic in DLX, central
+       to Knuth’s performance claims. 38
+     • Local counting bounds: for any fixed (r − 1)-subset T , the number of blocks containing T is forced
+       to be λr−1 = n−r+1
+                    q−r+1 ; maintaining these counts during backtracking detects impossibility early.
+                                                                                                             11
+
+
+
+
+Prioritized plan to search r ∈ {6,7,8,9} with n < 200
+
+Assumptions
+
+No specific compute constraints were provided, so I assume access ranging from a modern workstation to a
+small cluster. Time estimates below are heuristic ranges (high variance is expected because exact cover/
+SAT/ILP may flip from “minutes” to “months” with small parameter changes). 56
+
+
+Also, you mentioned “Codex 5.3 notes” but they were not included in this turn; this report is therefore a
+literature-and-method expansion that can be merged with your notes once provided.            57
+
+
+
+
+Practical size metrics for feasibility ranking
+
+For an S(r, q, n) exact cover instance:
+
+                                          n
+     • number of constraints (rows) = ( r ),
+                                                     n
+     • number of candidate blocks (columns) = ( q ),
+                                                                n−r
+     • row degree (blocks covering a fixed r -subset) = ( q−r ),
+                                    n n−r          n q
+     • number of 1s (incidences) = ( r )( q−r ) = ( q )(r).     11
+
+
+
+These quantities, while not determining runtime, strongly influence memory footprint and branching
+behavior in DLX/libexact and also drive encoding size in SAT/ILP. 58
+
+
+Priority targets (smallest admissible, not eliminated)
+
+The table below lists the most tractable “first wave” experiments per r , ordered by increasing incidence
+count (computed here from binomial coefficients; formulas are standard).           11
+
+
+
+
+                      blocks                                             row
+ target                                                   n                                  recommended first
+                         b=               n
+                                  rows ( r )       cols ( q )         degree    incidences
+ S(r, q, n)                                                                                  method
+                    ( r )/(qr)
+                     n
+                                                                       (n−r
+                                                                        q−r )
+
+                                                                                             DLX/libexact;
+ S(6, 7, 23)         14,421        100,947         245,157                17    1,716,099    optional small-
+                                                                                             group KM first 59
+
+                                                                                             DLX/libexact with
+                                                                                             heavy pruning; KM
+ S(7, 8, 24)         43,263        346,104         735,471                17    5,883,768
+                                                                                             with small
+                                                                                             transitive G 59
+
+
+
+
+                                                          9
+                      blocks                                     row
+  target                                               n                                   recommended first
+                         b=            n
+                                 rows ( r )      cols ( q )   degree      incidences
+  S(r, q, n)                                                                               method
+                    (nr )/(qr)                                 (n−r
+                                                                q−r )
+
+                                                                                           KM-orbit reduction
+                                                                                           strongly advised;
+  S(8, 9, 25)       120,175      1,081,575     2,042,975          17      18,386,775
+                                                                                           then SAT/ILP or DLX
+                                                                                            60
+
+
+                                                                                           KM + SAT/ILP; direct
+                                                                                           DLX only with
+  S(9, 10, 26)      312,455      3,124,550     5,311,735          17      53,117,350
+                                                                                           careful memory
+                                                                                           engineering 61
+
+                                                                                           DLX/libexact;
+  S(6, 7, 25)        25,300       177,100        480,700          19       3,364,900
+                                                                                           parallel seeds   62
+
+
+                                                                                           DLX/libexact; KM
+  S(7, 8, 26)        82,225       657,800      1,562,275          19      12,498,200
+                                                                                           group search 59
+
+                                                                                           KM-orbits + SAT/
+  S(8, 9, 27)       246,675      2,220,075     4,686,825          19      42,181,425       ILP; distributed
+                                                                                           branching 63
+
+                                                                                           KM + SAT/ILP;
+  S(9, 10, 28)      690,690      6,906,900    13,123,110          19     131,231,100       expect cluster-scale
+                                                                                           search 64
+
+
+Why these cases first
+
+These instances sit at the first admissible q = r + 1 points not eliminated by the known derivation vetoes
+n = r + 11 and n = r + 13.       54   They also minimize row degree (n − r when q = r + 1), which tends to
+help DLX-style branching: each constraint initially has relatively few candidate blocks.   65
+
+
+
+
+Van der Pol’s observation that results about S(r, r + 1, 2r + k) for large r are scarce implies that even
+these “smallest open” instances are not resolved by existing tables; thus, they offer the highest potential
+payoff per compute-hour in your n < 200 window. 10
+
+
+Expected compute resources (order-of-magnitude guidance)
+
+These estimates are engineering heuristics based on incidence counts and solver characteristics; they are
+not guaranteed.
+
+
+     • Tier 1 (single workstation, ~64–256 GB RAM): DLX/libexact on S(6, 7, 23), S(6, 7, 25), and
+       plausibly S(7, 8, 24) with strong pruning and/or moderate parallelization over seeds.          62
+
+     • Tier 2 (workstation + parallel seeds / small cluster): S(8, 9, 25), S(8, 9, 27), S(9, 10, 26) are
+       likely to require orbit reduction + SAT/ILP or distributed DLX. 64
+     • Tier 3 (cluster-scale, symmetry essential): most admissible cases with incidences ≳ 109 are
+       impractical without strong group actions (Kramer–Mesner) and distributed search.          66
+
+
+
+
+                                                       10
+Experimental workflow (mermaid)
+
+
+  flowchart TD
+    A[Enumerate (r,q,n) with r in {6,7,8,9}, n<200] --> B[Apply divisibility sieve
+  for i=0..r-1]
+    B --> C[Apply derivation vetoes: S(5,6,16) and S(4,5,17)]
+    C --> D[Rank by incidence size and symmetry options]
+    D --> E[Quick KM search with candidate groups G]
+     E -->|found| F[Validate design + compute automorphism group]
+     E -->|none with this G| G[Relax/alter group; repeat KM]
+     D --> H[Build exact cover instance (rows=r-subsets, cols=q-subsets or orbits)]
+     H --> I1[DLX / libexact (enumeration or existence)]
+     H --> I2[SAT solve with exactly-one constraints]
+     H --> I3[ILP / CP-SAT feasibility]
+     I1 --> J[If stuck: branch on canonical seeds + distribute]
+     I2 --> J
+     I3 --> J
+     J -->|found| F
+     J -->|exhausted| K[Nonexistence certificate / exhaustive log]
+
+
+This workflow mirrors the structure of the S(4, 5, 17) nonexistence computation (classification of derived
+designs + exact-cover search) and adapts it to your r = 6..9 frontier by making symmetry/orbit reduction a
+first-class tool.   67
+
+
+
+
+High-priority “group menu” for Kramer–Mesner attempts
+
+Because highly symmetric Steiner t-designs become rare at large t (and are strongly constrained in block-
+transitive regimes), group choices should be pragmatic: aim for moderate reductions, not maximal
+symmetry. 68 Suggested starting menu:
+
+
+      • cyclic Cn and dihedral D2n (difference-method inspired),
+      • small transitive groups of degree n (via GAP’s transitive group library),
+      • affine groups when n has suitable arithmetic form (e.g., n = p prime),
+      • subgroup chains G0 ≥ G1 ≥ … to gradually relax symmetry if no solution appears.       69
+
+
+
+This strategy aligns with the “prescribed automorphism group” philosophy documented in the PAG manual
+and in the Kramer–Mesner lineage. 43
+
+
+Deliverables to record for each attempted triple
+
+For each (r, q, n) attempt, record:
+
+
+1) admissibility proof (divisibility checks),
+2) solver encoding stats (rows/cols/incidences or orbit counts),
+3) result type: found design / not found under group G / fully exhausted (nonexistence under full search),
+
+
+
+
+                                                       11
+4) if found: store blocks, compute automorphism group, canonical label; if nonexistence: store branching
+transcript and (when possible) certificates (SAT UNSAT cores, MIP infeasibility logs). 70
+
+
+Timeline-style campaign plan (mermaid)
+
+
+     gantt
+       title Steiner system search campaign (r=6..9, n<200)
+       dateFormat YYYY-MM-DD
+       axisFormat              %b %d
+
+       section Sieve + setup
+       Implement admissibility + derivation veto pipeline                                  :a1, 2026-02-22, 7d
+       Build exact-cover / SAT / ILP generators                                           :a2, after a1, 14d
+       Integrate KM orbit reduction via GAP/PAG                                           :a3, after a1, 14d
+
+       section Frontier exact search (q=r+1 line)
+       S(6,7,23), S(6,7,25) DLX/libexact + seeds                                          :b1, after a2, 21d
+       S(7,8,24), S(7,8,26) DLX/libexact + symmetry breaks                                :b2, after b1, 28d
+
+       section Orbit-reduced / solver-hybrid phase
+       S(8,9,25), S(8,9,27) KM + SAT/ILP                                                  :c1, after a3, 35d
+       S(9,10,26), S(9,10,28) KM + SAT/ILP + distribution                                 :c2, after c1, 49d
+
+
+       section Expansion
+       Next admissible n along q=r+1; then q=r+2 cases                                      :d1, after c2, 60d
+
+
+This phased plan reflects the empirical reality that (i) the smallest open cases are most likely to be
+resolvable by direct exact cover, while (ii) r = 8, 9 quickly pushes memory and benefits disproportionately
+from orbit reduction and distributed search.                       71
+
+
+
+
+ 1    3    11   16   17   20    55   57   https://people.maths.ox.ac.uk/keevash/papers/designsI.pdf
+https://people.maths.ox.ac.uk/keevash/papers/designsI.pdf
+
+ 2    22   32   33   34   43    49   60   61   63   64   66   69   https://web.math.pmf.unizg.hr/acco/PAGmanual.pdf
+https://web.math.pmf.unizg.hr/acco/PAGmanual.pdf
+
+ 4    15   19   68   https://arxiv.org/pdf/1003.1879
+https://arxiv.org/pdf/1003.1879
+
+ 5    18   50   https://web.mat.bham.ac.uk/D.Kuehn/F-designs_merged_5c.pdf
+https://web.mat.bham.ac.uk/D.Kuehn/F-designs_merged_5c.pdf
+
+ 6    10   27   28   29   30    31   pure.tue.nl
+https://pure.tue.nl/ws/files/75493302/20170920_Pol.pdf
+
+ 7    14   https://ir.library.osaka-u.ac.jp/repo/ouka/all/7296/ojm12_03_15.pdf
+https://ir.library.osaka-u.ac.jp/repo/ouka/all/7296/ojm12_03_15.pdf
+
+
+
+
+                                                                        12
+ 8   12   13   35   40   54   67   https://pottonen.kapsi.fi/nonexistence.pdf
+https://pottonen.kapsi.fi/nonexistence.pdf
+
+ 9   25   https://webspace.maths.qmul.ac.uk/l.h.soicher/designtheory.org/library/encyc/topics/pap.pdf
+https://webspace.maths.qmul.ac.uk/l.h.soicher/designtheory.org/library/encyc/topics/pap.pdf
+
+21   https://www.sciencedirect.com/science/article/pii/0012365X76900303
+https://www.sciencedirect.com/science/article/pii/0012365X76900303
+
+23   36   38   56   58   59   62   65   https://www.rose-hulman.edu/class/cs/csse313/assignments/csp/
+DancingLinks.pdf
+https://www.rose-hulman.edu/class/cs/csse313/assignments/csp/DancingLinks.pdf
+
+24   https://arxiv.org/abs/1602.06751
+https://arxiv.org/abs/1602.06751
+
+26   https://www.combinatorics.org/ojs/index.php/eljc/article/download/DS18/pdf/
+https://www.combinatorics.org/ojs/index.php/eljc/article/download/DS18/pdf/
+
+37   45   71   https://pottonen.kapsi.fi/hiit-tr-2008-1.pdf
+https://pottonen.kapsi.fi/hiit-tr-2008-1.pdf
+
+39   44   53   70   https://users.cecs.anu.edu.au/~bdm/nauty/nug27.pdf
+https://users.cecs.anu.edu.au/~bdm/nauty/nug27.pdf
+
+41   42   https://lara.epfl.ch/w/_media/projects%3Aminisat-anextensiblesatsolver.pdf
+https://lara.epfl.ch/w/_media/projects%3Aminisat-anextensiblesatsolver.pdf
+
+46   https://developers.google.com/optimization/cp/cp_solver
+https://developers.google.com/optimization/cp/cp_solver
+
+47   https://docs.gurobi.com/projects/optimizer/en/current/index.html
+https://docs.gurobi.com/projects/optimizer/en/current/index.html
+
+48   https://www.ibm.com/docs/en/cofz/12.10.0?topic=v12100-users-manual-cplex-optimizer-zos
+https://www.ibm.com/docs/en/cofz/12.10.0?topic=v12100-users-manual-cplex-optimizer-zos
+
+51   https://dl.acm.org/doi/pdf/10.1145/170791.170872
+https://dl.acm.org/doi/pdf/10.1145/170791.170872
+
+52   https://janmagnet.wordpress.com/wp-content/uploads/2008/07/decs-report-draft-02.pdf
+https://janmagnet.wordpress.com/wp-content/uploads/2008/07/decs-report-draft-02.pdf
+
+
+
+
+                                                              13
+

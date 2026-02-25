@@ -1,0 +1,16 @@
+version: 1
+generated_utc: "2026-02-22T15:39:47.830005+00:00"
+run_id: "20260222_smoke_gsfix"
+round_id: "round_0001"
+mode: "research"
+source_notes_file: "steiner_logs_smoke_gsfix/run_20260222_smoke_gsfix/notes/round_0001_notes.md"
+claims:
+  - statement: "advance statement:"
+    origin: "core_advance"
+    status: "observed"
+  - statement: "evidence from this round (metrics, runtime, structure):"
+    origin: "core_advance"
+    status: "observed"
+  - statement: "transfer value for next rounds:"
+    origin: "core_advance"
+    status: "observed"
