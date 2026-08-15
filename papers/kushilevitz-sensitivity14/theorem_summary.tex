@@ -1,0 +1,174 @@
+\documentclass[10pt]{article}
+
+\usepackage[letterpaper,margin=0.42in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{multicol}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1.4pt}
+\setlength{\columnsep}{0.25in}
+\setlength{\abovedisplayskip}{2pt}
+\setlength{\belowdisplayskip}{2pt}
+
+\newcommand{\cube}[1]{\{0,1\}^{#1}}
+\newcommand{\NAE}{\operatorname{NAE}}
+\newcommand{\ANF}{\operatorname{ANF}}
+
+\begin{document}
+
+\begin{center}
+  {\large\bfseries Theorem Summary: Exact Repair Obstructions for a\\[-1pt]
+  Sensitivity--14 Kushilevitz Composition}\par
+  \vspace{2pt}
+  {\small Jia Lei and Bokun Zhao \quad August 14, 2026}
+\end{center}
+
+\vspace{-5pt}
+\scriptsize
+\begin{multicols}{2}
+
+\textbf{Setup and historical base.}
+Let
+\[
+ K(y)=\sum_i y_i-\sum_{i<j}y_iy_j+\sum_{T\in\mathcal D}\prod_{i\in T}y_i,
+\]
+\[
+\mathcal D=\{013,014,024,025,035,345,145,125,123,234\}.
+\]
+The set $\mathcal D$ is the $2\!-\!(6,3,2)$ design, and $K$ is a relabeling
+of the degree-three, sensitivity-six function of Kushilevitz recorded by
+Nisan and Wigderson.  For four disjoint raw triples $X_i$, put
+\[
+ L_i=\sum_{a\in X_i}x_a,\qquad
+ E_i=\sum_{\{a,b\}\subset X_i}x_ax_b,\qquad
+ g_i=\NAE_3(X_i)=L_i-E_i.
+\]
+
+\textbf{Near-solution (degree \(6\), sensitivity \(14\)).}
+The Boolean function
+\[
+ P=K(g_0,g_1,g_2,g_3,x_{12},x_{13})
+\]
+satisfies $P(0)=0$ and $P(e_j)=1$ for $0\le j<14$.  Thus
+$s(P,0)=14$.  Its complete highest layer is
+\[
+ P_6=-E_1E_3(E_0+E_2).
+\]
+It has exactly $2\cdot3^3=54$ distinct degree-six monomials, all with
+coefficient $-1$, and none of higher degree.
+
+\textbf{Two noncancellation principles.}
+First uniquely multilinearize a nonzero meta-polynomial $Q$.  Under substitution of
+disjoint NAE blocks and disjoint coordinate ports, distinct meta monomials
+have distinct raw top signatures.  Giving NAE variables weight $2$ and ports
+weight $1$,
+\[
+ \deg Q(g,z)=\max_{c_{I,J}\ne0}\bigl(2|I|+|J|\bigr).
+\]
+Disjointness and multilinearization are essential.
+
+For the separate Walsh lemma, in spin variables let
+\[
+ \chi_i=s_{i0}s_{i1}s_{i2},\quad
+ u_i=\frac{s_{i0}s_{i1}+s_{i0}s_{i2}+s_{i1}s_{i2}}2,\quad
+ r_i=1-2g_i=u_i-\frac12.
+\]
+If $q=\sum_{U,B}d_{U,B}u_Ut_B$, multiplication by
+$\chi_0\chi_1\chi_2\chi_3$ sends each nonzero sector $(U,B)$ to disjoint
+Walsh characters of degree
+\[
+ 12-2|U|+|B|.
+\]
+This block-signature statement is not an application of the weighted lemma.
+
+\textbf{Central selector obstruction.}
+Define
+\[
+ A=K(g_0,g_1,g_2,x_9,x_{10},x_{11}).
+\]
+Then $A$ is Boolean, has degree $5$, sensitivity $12$, and
+\[
+ A_5=E_0E_1(x_9+x_{10})+E_0E_2(x_{10}+x_{11})
+      +E_1E_2(x_{11}+x_9).
+\]
+There is no Boolean $B:\cube{12}\to\{0,1\}$ with
+$B(0)=1$ and $\deg(B-A)\le4$.  Averaging $B$ over block permutations and
+whole-block complements gives a $[0,1]$-valued function of the NAE outputs and
+ports.  Its fixed-port heavy slices are quadratic.  The sums $S_z$ of their
+three pair coefficients satisfy
+\[
+ S_{111}=S_{000}+6,\quad
+ S_{000}\ge-3+2C(0),\quad S_{111}\le3,\quad C(0)\ge\tfrac18,
+\]
+a contradiction.  Here $B$ may depend arbitrarily on all twelve raw variables;
+the theorem is scoped to the fixed base $A$.
+
+\textbf{Gate-factor and fixed-routing obstructions.}
+Let $T:\cube6\to\{0,1\}$ and
+$F=T(g_0,g_1,g_2,g_3,x_{12},x_{13})$.  If $F(0)=0$ and
+$F(e_j)=1$ for every $0\le j<14$, then $\deg F>5$: setting the ports to zero
+would leave a Boolean quadratic with four sensitive meta-bits, whereas every
+Boolean quadratic has sensitivity at most $3$.  Moreover, let each $h_i$ be a
+Boolean function of degree at most two with $h_i(0)=0$, sensitive at its own
+origin in all three coordinates of a designated pairwise-disjoint triple.
+Routing $h_i$ to input $i$ of $K$, with two distinct coordinate ports disjoint
+from all triples routed to inputs $4,5$, cannot evade the degree-six layer.
+
+\textbf{Full-parity-twist obstruction.}
+For every Boolean meta-function $T$,
+\[
+ T(g_0,g_1,g_2,g_3,x_{12},x_{13})
+ \oplus p_0\oplus p_1\oplus p_2\oplus p_3
+\]
+has degree $>5$, where $p_i$ is raw XOR parity on block $i$.  The Walsh lemma
+leaves only a putative output spin
+$q_T=a(t_{12},t_{13})\prod_i(r_i+1/2)$.  If $a=0$, Booleanity fails; if
+$a\ne0$, its magnitude changes by factors of $3$ between all-equal and NAE
+block inputs, contradicting $|q_T|=1$.  Partial twists and raw
+orientation-dependent $T$ are outside the theorem.
+
+\textbf{Exact additive reformulation.}
+Let $\mathcal T=\{0,e_0,\ldots,e_{13}\}$ and
+$\Delta=E_1E_3(E_0+E_2)=-P_6$.  For real multilinear $R$, $F=P+R$ is
+Boolean, has degree at most $5$, and agrees with $P$ on $\mathcal T$ if and
+only if
+\[
+ R=\Delta+L\ (\deg L\le5),\quad
+ R(R+2P-1)=0\text{ on }\cube{14},\quad R|_{\mathcal T}=0.
+\]
+Every admissible $F$ occurs exactly once, with $R=F-P$.
+
+\textbf{Exact XOR reformulation.}
+Every Boolean $F$ occurs uniquely as
+\[
+ J=P\oplus F,\qquad F=P+(1-2P)J.
+\]
+The desired functions correspond exactly to Boolean masks $J$ with
+$J|_{\mathcal T}=0$ and $\deg_{\mathbb R}(P+(1-2P)J)\le5$.  Necessarily, but
+not sufficiently,
+$\ANF_{\ge6}(J)=\ANF_{\ge6}(P)$.  The additive and XOR systems are lossless
+changes of coordinates, not restricted search families.
+
+\textbf{The simplest mask fails at degree \(10\).}
+For $J_0=g_1g_3(g_0\oplus g_2)$,
+\[
+ \deg_{\mathbb R}J_0=8,\quad (J_0)_8=-2E_0E_1E_2E_3,
+\]
+whereas exact integer M\"obius inversion gives
+\[
+ \deg(P\oplus J_0)=10,\quad
+ (P\oplus J_0)_{10}=4E_0E_1E_2E_3x_{12}x_{13}.
+\]
+The top defect has exactly $3^4=81$ monomials, all coefficient $+4$.
+
+\textbf{Status and review focus.}
+No degree-five, sensitivity-fourteen construction, improved recursive
+exponent, or priority claim is made.  The accompanying standard-library
+verifier reconstructs $K,A,P,J_0,P\oplus J_0$ and checks their exact integer
+M\"obius coefficients.  Specialist review should focus on both signature
+lemmas, the selector averaging, gate-factor and parity scopes, both exact
+systems, the degree-ten calculation, and the literature comparison.
+
+\end{multicols}
+\end{document}
