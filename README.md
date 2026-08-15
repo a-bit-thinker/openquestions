@@ -17,6 +17,8 @@
 - `run_steiner_round.sh`: thin wrapper for single round start/close flow.
 - `run_steiner_loop.sh`: automated multi-round loop with cross-run memory.
 - `papers/`: local PDF library for reusable proof-method context.
+  - `kushilevitz-sensitivity14/`: preprint, one-page theorem summary,
+    LaTeX sources, bibliography, and exact Möbius-inversion verifier.
 - `STEINER_LOOP_LOGGING.md`: detailed workflow and logging rules.
 - `PR_REVIEW.md`: review notes from merged PR variants.
 

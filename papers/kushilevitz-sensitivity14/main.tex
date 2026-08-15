@@ -1,0 +1,931 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage[nameinlink,capitalize]{cleveref}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\cube}[1]{\{0,1\}^{#1}}
+\newcommand{\Ftwo}{\mathbb F_2}
+\newcommand{\R}{\mathbb R}
+\newcommand{\wt}{\operatorname{wt}}
+\newcommand{\NAE}{\operatorname{NAE}}
+\newcommand{\OR}{\operatorname{OR}}
+\newcommand{\ANF}{\operatorname{ANF}}
+\newcommand{\supp}{\operatorname{supp}}
+
+\title{Exact Repair Obstructions for a Sensitivity--14 Composition\\
+Built from the Kushilevitz Function}
+\author{Jia Lei \and Bokun Zhao}
+\date{August 14, 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Eyal Kushilevitz's six-variable Boolean function, recorded in a footnote of
+Nisan and Wigderson, has real degree three and full sensitivity six.  We use a
+coordinate relabeling of that function as an outer map.  Substituting four
+disjoint three-variable not-all-equal gates and two coordinate inputs gives an
+explicit Boolean function on fourteen variables with sensitivity fourteen and
+real degree exactly six.  Its degree-six homogeneous component is
+\(-E_1E_3(E_0+E_2)\), consisting of exactly 54 monomials, each with
+coefficient \(-1\).
+
+The main results exclude several precisely specified routes to lowering this
+construction to degree five.  First, a degree-five, sensitivity-twelve base
+\(A\), built from the same outer function, admits no Boolean function \(B\) on
+the same twelve variables satisfying \(B(0)=1\) and \(\deg(B-A)\le4\).  Second, a target-labelled
+repair cannot factor only through the four not-all-equal outputs and the two
+coordinate ports.  Third, twisting any such factored function by the XOR
+parities of all four raw blocks always has degree greater than five.  Full
+proofs rest on two direct-sum noncancellation lemmas: one for weighted top
+signatures under disjoint block substitution, and one for blockwise Walsh
+signatures.
+
+We also give two exact, lossless parameterizations of all Boolean corrections
+relative to the fixed base \(P\): an additive residual system and an XOR
+correction system.  For the simplest XOR representative
+\(J_0=g_1g_3(g_0\oplus g_2)\), one has \(\deg_{\mathbb R}J_0=8\), while exact
+integer M\"obius inversion shows that \(P\oplus J_0\) has degree ten.  Its top
+component is \(4E_0E_1E_2E_3x_{12}x_{13}\), comprising exactly 81 monomials.
+A standalone verifier accompanies the paper.  The results do not construct a
+degree-five, sensitivity-fourteen function and do not improve the Kushilevitz
+recursive exponent.
+\end{abstract}
+
+\section{Introduction}
+
+For a Boolean function \(f:\cube n\to\{0,1\}\), let
+\(\deg_{\R}(f)\) be the degree of its unique real multilinear polynomial and
+let \(s(f)\) be its maximum sensitivity.  Nisan and Szegedy established the
+foundational connection between real degree and combinatorial query measures
+\cite{NisanSzegedy1994}; Huang later proved the sensitivity conjecture
+\cite{Huang2019}.  The explicit recursive benchmark used in this paper comes
+from a six-variable function due to Eyal Kushilevitz.  Kushilevitz did not
+publish the function separately; it appears in footnote~1 of Nisan and
+Wigderson's communication-complexity paper \cite{NisanWigderson1995}.  An
+explicit exposition is also given in \cite{HatamiKulkarniPankratov2011}.  Its
+iterated composition has sensitivity \(6^k\) and degree \(3^k\).
+
+This paper begins from that exact historical object.  Our first construction
+has the desired fourteen sensitive directions but degree six rather than five.
+Thus ``near construction'' has only the literal meaning ``one degree above the
+target.''  It does not itself improve any exponent.  A degree-five,
+sensitivity-fourteen function would clear the Kushilevitz exponent because
+\[
+  3^{18}=387420489>362797056=6^{11},\qquad
+  14^{11}=4049565169664>3814697265625=5^{18}.
+\]
+The function constructed here has parameters \((6,14)\), not \((5,14)\).
+
+Our results are structural and confined to the fixed constructions below.  We
+identify the complete degree-six layer of \(P\), analyze selector and
+parity-twist obstructions, and parameterize every Boolean correction relative
+to \(P\) in two exact coordinate systems.  These parameterizations are not
+ansatzes.  The obstruction theorems exclude only the explicitly stated
+subfamilies within them.
+
+\paragraph{Main results.}
+\begin{enumerate}[label=(\roman*)]
+  \item An explicit Kushilevitz-based Boolean function \(P\) on fourteen
+  variables has sensitivity fourteen, degree six, and exactly 54 degree-six
+  monomials, all with coefficient \(-1\) (\cref{thm:P}).
+  \item A related degree-five, sensitivity-twelve base \(A\) has no arbitrary
+  Boolean selector-neighbour \(B\) on the same variables with \(B(0)=1\) and
+  \(\deg(B-A)\le4\) (\cref{thm:selector}).
+  \item No target-labelled degree-five repair can factor only through the four
+  block outputs and two ports (\cref{thm:gate-factor}).
+  \item XOR twisting a gate-factored Boolean function by all four raw block
+  parities always has degree greater than five
+  (\cref{thm:parity-twist}).
+  \item Additive and XOR correction systems are exact equivalences
+  (\cref{thm:additive,thm:xor}).  For the natural representative \(J_0\), the
+  corrected function \(P\oplus J_0\) has degree ten and an exact 81-term top
+  layer (\cref{thm:J0}).
+\end{enumerate}
+
+\paragraph{Provenance of proof and computation.}
+The construction formulas, noncancellation lemmas, selector obstruction,
+gate-factor obstruction, parity-twist obstruction, and exact reformulations
+are proved symbolically.  Exact finite computation is used only to materialize
+truth tables and coefficient tables and to verify the complete coefficient
+profile of \(P\oplus J_0\).  The top degree-ten formula also has a hand proof.
+The accompanying verifier uses only integer arithmetic.
+
+\section{Prior work and scope}\label{sec:related}
+
+The distinction between the historical base function and the results of this
+paper is important.
+
+\paragraph{Kushilevitz and Nisan--Wigderson.}
+The six-variable degree-three, sensitivity-six outer function is due to Eyal
+Kushilevitz and was recorded by Nisan and Wigderson
+\cite{NisanWigderson1995}.  Neither that function nor its recursive
+amplification is claimed here as new.  Our displayed outer cubic is an explicit
+coordinate relabeling of it.  Nisan and Wigderson identify their source as
+``E.~Kushilevitz, private communication, 1994.''  What is studied here is a different, nonrecursive
+substitution with four quadratic blocks and two linear ports, together with its
+repair equations and obstruction theory.
+
+\paragraph{Amano.}
+Amano proved that no fully sensitive Boolean function on ten variables has
+real degree at most four \cite[Theorem~3]{Amano2010}.  Restricting a function
+at a point with at least ten sensitive coordinates to ten such coordinates
+therefore gives the global consequence
+\[
+ \deg_{\mathbb R}(f)\le4\quad\Longrightarrow\quad s(f)\le9.
+\]
+Neither this bound nor Amano's ten-variable exclusion is claimed here as new.
+Amano also reported a computer-verified obstruction for the narrower class of
+fourteen-variable degree-five functions whose odd-degree coefficients lie in
+\(\{0,1\}\) and even-degree coefficients lie in \(\{0,-1\}\)
+\cite[Fact~6]{Amano2010}.  That bounded-polynomial obstruction and our
+fixed-base obstructions are differently scoped; neither is asserted here to
+subsume the other.  In later work, Amano enumerated, up to NPN equivalence,
+nondegenerate Boolean functions of sensitivity three and determined extremal
+values of several measures in that class \cite{Amano2017}.  Our
+quadratic-rigidity proposition is only a local analytic statement under the
+additional real-degree-two hypothesis, not a new enumeration or a
+classification of all sensitivity-three functions.
+
+\paragraph{Proskurin.}
+Proskurin sharpened universal degree--block-sensitivity inequalities and
+derived the unique univariate polynomial that could arise by symmetrizing a
+hypothetical fully sensitive ten-variable degree-four function
+\cite{Proskurin2021}.  Amano's earlier theorem already excludes the existence
+of such a Boolean function.  Our claims neither improve Proskurin's universal
+inequalities nor provide a new global low-degree sensitivity bound; they
+concern specified twelve- and fourteen-variable Kushilevitz-based
+constructions.
+
+\paragraph{Maitra--Mukherjee--St\u{a}nic\u{a}--Tang.}
+Maitra, Mukherjee, St\u{a}nic\u{a}, and Tang connected real degree to
+resiliency, studied recursive amplification and higher-order sensitivity, and
+analyzed low-degree fully sensitive functions on small numbers of variables
+\cite{MaitraMukherjeeStanicaTang2025}.  Their computations include searches
+among rotation-symmetric functions through ten variables.  Our
+fourteen-variable construction does not improve their or Kushilevitz's
+separation exponent.  The principal statements established in this manuscript
+include the explicit 54-term degree-six component, the two exact fixed-base
+parameterizations, and the selector, gate-factor, fixed-routing, parity-twist,
+and local alternating-sum obstructions with their stated hypotheses.  A
+sufficiently broad priority search has not yet been completed, so we make no
+novelty or priority claim for these restricted statements.
+
+\section{Definitions and the Kushilevitz outer function}
+
+For \(x\in\cube n\) and \(i\in[n]\), write \(x^{\oplus i}\) for \(x\) with
+coordinate \(i\) flipped.  The local and maximum sensitivities are
+\[
+ s(f,x)=\bigl|\{i:f(x)\ne f(x^{\oplus i})\}\bigr|,
+ \qquad s(f)=\max_x s(f,x).
+\]
+All unqualified degrees below are real multilinear degrees.  The algebraic
+normal form \(\ANF(f)\) is the unique multilinear polynomial over \(\Ftwo\);
+its degree will always be written \(\deg_{\Ftwo}\), never simply ``degree.''
+See \cite{ODonnell2014} for standard Boolean-function analysis conventions.
+
+In zero-based coordinates, one standard form of the Kushilevitz cubic is
+\[
+ h_{\mathrm K}(z)
+ =\sum_{i=0}^{5}z_i-\sum_{0\le i<j<6}z_iz_j
+ +\sum_{D\in\mathcal D_{\mathrm K}}z_D,
+\]
+where \(z_D=\prod_{i\in D}z_i\) and
+\[
+\mathcal D_{\mathrm K}
+=\{023,014,034,123,124,015,025,135,245,345\}.
+\]
+This is the function attributed to Kushilevitz in
+\cite{NisanWigderson1995,HatamiKulkarniPankratov2011}.
+
+For the block placement used in this paper it is convenient to relabel its
+coordinates.  Put
+\[
+ K(y_0,\ldots,y_5)=h_{\mathrm K}(y_0,y_1,y_2,y_5,y_3,y_4).
+\]
+Equivalently,
+\[
+ K(y)=\sum_i y_i-\sum_{i<j}y_iy_j+\sum_{D\in\mathcal D}y_D,
+\]
+with
+\[
+ \mathcal D=\{013,014,024,025,035,123,125,145,234,345\}.
+\]
+Equivalently,
+\((y_0,y_1,y_2,y_3,y_4,y_5)=(z_0,z_1,z_2,z_4,z_5,z_3)\).
+
+\begin{proposition}[Kushilevitz function]\label{prop:K}
+The set \(\mathcal D\) is a \(2\!-(6,3,2)\) design.  The function \(K\) is
+Boolean, has degree exactly three, and satisfies
+\(K(0)=0\) and \(K(e_i)=1\) for all six coordinates.
+\end{proposition}
+
+\begin{proof}
+Direct inspection of the ten displayed triples shows that every pair occurs
+exactly twice.  Hence every point occurs in five blocks.  If
+\(S\subseteq[6]\), \(|S|=w\), and \(b(S)\) is the number of design blocks
+contained in \(S\), then
+\[
+ K(1_S)=w-\binom w2+b(S).
+\]
+For \(w=0,1,2\) the values are \(0,1,1\).  For \(w=3\), the value is the
+indicator that \(S\) is a block.  If \(w=4\), the complementary pair is met by
+\(5+5-2=8\) blocks, leaving two blocks inside \(S\); the value is
+\(4-6+2=0\).  If \(w=5\), exactly five blocks avoid the omitted point, so the
+value is \(5-10+5=0\).  Finally, at \(w=6\) it is \(6-15+10=1\).
+Thus \(K\) is Boolean.  Its ten cubic coefficients are nonzero, so its degree
+is three, and the statements at the origin and singleton points are immediate.
+\end{proof}
+
+\section{Two block-signature noncancellation lemmas}\label{sec:signatures}
+
+The obstruction proofs use two different direct-sum facts.  We state both in
+full because conflating them conceals essential hypotheses.
+We adopt the conventions \(\deg 0=-\infty\) and
+\(\max\varnothing=-\infty\).
+
+Let \(X_i=\{x_{i0},x_{i1},x_{i2}\}\) be pairwise disjoint triples and define
+\[
+ L_i=x_{i0}+x_{i1}+x_{i2},\qquad
+ E_i=x_{i0}x_{i1}+x_{i0}x_{i2}+x_{i1}x_{i2},\qquad
+ g_i=L_i-E_i=\NAE_3(X_i).
+\]
+
+\begin{lemma}[Weighted top signatures]\label{lem:weighted-signature}
+Let \(z_1,\ldots,z_s\) be distinct raw coordinates disjoint from all blocks,
+and let
+\[
+ Q(y,z)=\sum_{A\subseteq[r]}\sum_{B\subseteq[s]}
+ c_{A,B}y_Az_B
+\]
+be the unique multilinear meta polynomial over a characteristic-zero field.
+Give each \(y_i\) weight two and each \(z_j\) weight one.  For every
+\(A,B\), and every choice of a pair \(p_i\in\binom{X_i}{2}\) for \(i\in A\),
+the coefficient in \(Q(g,z)\) of
+\[
+ x_{\cup_{i\in A}p_i}z_B
+\]
+is exactly \((-1)^{|A|}c_{A,B}\).  Consequently,
+\[
+ \deg Q(g,z)=\max_{c_{A,B}\ne0}\bigl(2|A|+|B|\bigr).
+\]
+\end{lemma}
+
+\begin{proof}
+The displayed raw monomial contains exactly two variables from each block in
+\(A\), none from any block outside \(A\), and exactly the ports in \(B\).  From
+the meta monomial \(y_Az_B\), it is obtained only by choosing one quadratic
+term from each \(-E_i\), and hence has coefficient
+\((-1)^{|A|}c_{A,B}\).
+
+No different meta support can contribute to the same monomial.  A block in
+\(A'\setminus A\) would contribute at least one raw variable; a block in
+\(A\setminus A'\) would contribute none; and a different port set has a
+different raw port support.  Thus these top signatures lie in pairwise disjoint
+monomial subspaces and cannot cancel.  A nonzero coefficient of maximum
+weighted degree therefore produces a nonzero raw monomial of that degree,
+while no substitution can exceed that weighted degree.  This proves the
+formula.
+\end{proof}
+
+\begin{remark}
+Disjointness and prior multilinearization are necessary.  If two formal gates
+use the same raw block, \(y_0-y_1\) may vanish after substitution.  If a meta
+polynomial is not multilinearized, \(y_0^2-y_0\) is an immediate counterexample.
+The lemma also says nothing about a function that sees raw orientation inside a
+block rather than only \(g_i\).
+\end{remark}
+
+For the second lemma use spin variables \(s_{ij}=1-2x_{ij}\), and put
+\[
+ \chi_i=s_{i0}s_{i1}s_{i2},\qquad
+ u_i=\frac{s_{i0}s_{i1}+s_{i0}s_{i2}+s_{i1}s_{i2}}2,
+ \qquad r_i=1-2g_i=u_i-\frac12.
+\]
+
+\begin{lemma}[Walsh block signatures]\label{lem:walsh-signature}
+Let \(t_1,\ldots,t_s\) be port spins disjoint from the four blocks, and write a
+multilinear meta-spin polynomial, after the shift \(r_i=u_i-\tfrac12\), as
+\[
+ q(r,t)=\sum_{U\subseteq[4]}\sum_{B\subseteq[s]}d_{U,B}u_Ut_B.
+\]
+After multiplication by \(\chi=\chi_0\chi_1\chi_2\chi_3\), every nonzero
+\(d_{U,B}\) produces \(3^{|U|}\) distinct Walsh characters of degree
+\[
+ 12-2|U|+|B|,
+\]
+each with coefficient \(2^{-|U|}d_{U,B}\).  Characters produced by distinct
+\((U,B)\), or by different coordinate choices inside a block, are distinct.
+Hence
+\[
+ \deg(\chi q)=\max_{d_{U,B}\ne0}\bigl(12-2|U|+|B|\bigr).
+\]
+\end{lemma}
+
+\begin{proof}
+For \(i\in U\),
+\[
+ \chi_i u_i=\frac{s_{i0}+s_{i1}+s_{i2}}2,
+\]
+so block \(i\) contributes one of three degree-one characters.  For
+\(i\notin U\), it contributes the unique degree-three character \(\chi_i\).
+The ports contribute exactly the character indexed by \(B\).
+
+The blockwise signature ``one selected spin'' versus ``all three spins''
+recovers \(U\), the selected spin recovers the coordinate choice, and the port
+support recovers \(B\).  The corresponding Walsh characters are therefore
+pairwise distinct.  Since Walsh characters form a basis, no cross-signature
+cancellation is possible.  Summing the four block degrees and the port degree
+gives the stated degree formula.
+\end{proof}
+
+\section{The degree-six, sensitivity-fourteen composition}
+
+Use four disjoint blocks
+\(X_i=(x_{3i},x_{3i+1},x_{3i+2})\), \(0\le i<4\), and define
+\[
+ P=K(g_0,g_1,g_2,g_3,x_{12},x_{13}).
+\]
+
+\begin{theorem}\label{thm:P}
+The function \(P\) is Boolean, satisfies
+\[
+ P(0)=0,\qquad P(e_j)=1\quad(0\le j<14),
+\]
+and therefore has sensitivity fourteen at the origin.  Its degree is exactly
+six, and its homogeneous degree-six part is
+\[
+ P_6=-E_0E_1E_3-E_1E_2E_3=-E_1E_3(E_0+E_2).
+\]
+It contains exactly 54 degree-six monomials, each with coefficient \(-1\), and
+has no term of higher degree.
+\end{theorem}
+
+\begin{proof}
+Booleanity follows by composing Boolean functions.  At the raw origin all six
+outer inputs vanish.  A singleton in one of the first twelve coordinates
+changes exactly one \(g_i\) from zero to one; the final two coordinates are
+the two remaining outer singleton directions.  The target rows follow from
+\cref{prop:K}.
+
+By \cref{lem:weighted-signature}, raw degree six can arise only from an outer
+cubic containing three heavy inputs.  In \(\mathcal D\) the only such triples
+are \(013\) and \(123\), whose top terms are respectively
+\(-E_0E_1E_3\) and \(-E_1E_2E_3\).  Their block signatures differ, so they
+cannot cancel.  Each product of three \(E_i\)'s has \(3^3=27\) distinct
+monomials; the two sets are disjoint.  No outer term has weighted degree above
+six.
+\end{proof}
+
+\section{The central selector obstruction}\label{sec:selector}
+
+The following twelve-variable slice is a natural attempt to obtain a
+degree-five base and add one or two selector variables.  Use three NAE blocks
+on \(x_0,\ldots,x_8\), put
+\(\ell_3=x_9,\ell_4=x_{10},\ell_5=x_{11}\), and define
+\[
+ A=K(g_0,g_1,g_2,\ell_3,\ell_4,\ell_5).
+\]
+
+\begin{theorem}[Arbitrary-selector obstruction]\label{thm:selector}
+The function \(A\) is Boolean, has sensitivity twelve at the origin, and has
+degree exactly five.  Its degree-five part is
+\[
+ A_5=E_0E_1(\ell_3+\ell_4)
+     +E_0E_2(\ell_4+\ell_5)
+     +E_1E_2(\ell_5+\ell_3),
+\]
+which consists of 54 distinct coefficient-\(+1\) monomials.
+
+There is no Boolean function \(B:\cube{12}\to\{0,1\}\) satisfying
+\[
+ B(0)=1,
+ \qquad \deg(B-A)\le4.
+\]
+\end{theorem}
+
+\begin{proof}
+The heavy triple \(012\) is not a block of \(\mathcal D\), so no outer cubic
+contains three heavy inputs.  The six heavy-heavy-linear blocks are
+\[
+ 013,014,024,025,125,123.
+\]
+The weighted-signature lemma yields the displayed degree-five part.  Each of
+its six summands contributes nine distinct masks, distinguished by their heavy
+block pair and linear port.  The Booleanity and twelve singleton rows follow as
+in \cref{thm:P}.
+
+Assume that \(B\) exists.  Average \(B\) under independent coordinate
+permutations inside each heavy block and under independently complementing all
+three coordinates of each block.  Call the average \(C\).  These affine cube
+automorphisms preserve real degree and fix \(A\); therefore
+\[
+ 0\le C\le1,\qquad \deg(C-A)\le4.
+\]
+The action on one raw block has exactly two orbits, the points with NAE value
+zero and those with NAE value one.  Thus \(C\) factors through the three NAE
+outputs and three linears.  The meta-origin orbit contains the eight points
+obtained by choosing each raw block to be \(000\) or \(111\).  Since it contains
+the raw origin and \(B(0)=1\),
+\[
+ c_0=C(0,0,0,0,0,0)\ge\frac18.
+\]
+
+Apply \cref{lem:weighted-signature} to the unique multilinear meta polynomial
+of \(C-A\).  Every meta coefficient of weight greater than four vanishes.
+Consequently all HHH coefficients of \(C\), including their linear supersets,
+are zero; the six HHL coefficients agree with those of \(A\) and equal one;
+and all HHLL and HHLLL coefficients vanish.
+
+Fix a linear assignment \(z\in\cube3\), and write \(h_z\) for \(C\) as a
+function of the three heavy variables.  It is quadratic.  If
+\(b_{ij}(z)\) are its three heavy-pair coefficients, the preceding coefficient
+identities give
+\[
+\begin{aligned}
+ b_{01}(z)&=\beta_{01}+z_3+z_4,\\
+ b_{02}(z)&=\beta_{02}+z_4+z_5,\\
+ b_{12}(z)&=\beta_{12}+z_5+z_3.
+\end{aligned}
+\]
+For a quadratic polynomial on three variables define
+\[
+ S_z=h_z(111)-h_z(100)-h_z(010)-h_z(001)+2h_z(000).
+\]
+M\"obius inversion on the three-cube shows that \(S_z\) is the sum of the
+three pair coefficients.  Hence
+\[
+ S_{111}=S_{000}+6.
+\]
+Because every value of \(h_z\) lies in \([0,1]\),
+\[
+ S_{000}\ge-3+2c_0,
+ \qquad S_{111}\le3.
+\]
+But \(c_0\ge1/8\) implies
+\[
+ S_{111}\ge-3+\frac14+6=\frac{13}{4}>3,
+\]
+a contradiction.
+\end{proof}
+
+\begin{remark}[Exact scope]
+The theorem treats arbitrary Boolean \(B\) on the same twelve raw variables;
+it is not a restriction to gate-factored selectors.  It depends essentially on
+the fixed base \(A\), the anchored value \(B(0)=1\), and the degree-four
+difference.  For example, without \(B(0)=1\) one may take \(B=A\); without
+Booleanity one may take \(B=A+1\).  It does not exclude a different base,
+additional variables, or a different outer architecture.
+\end{remark}
+
+\section{Gate-factor and parity-twist obstructions}\label{sec:central-obstructions}
+
+We next return to the fourteen-variable setting.  These results explain why a
+successful repair cannot see only the four NAE output bits and why the most
+obvious full-block parity dualization also fails.
+
+\begin{proposition}[Quadratic rigidity]\label{prop:quadratic}
+Every Boolean function of real degree at most two has sensitivity at most
+three.  More precisely, if \(h(0)=0\) and its sensitive set at the origin is
+exactly \(\{a,b,c\}\), then
+\[
+ h=\NAE_3(x_a,x_b,x_c)
+\]
+and \(h\) is independent of every other coordinate.
+\end{proposition}
+
+\begin{proof}
+Translate a maximally sensitive point to the origin and complement the output
+if necessary; these operations preserve degree.  Write
+\[
+ h=\sum_i\alpha_i x_i+\sum_{i<j}\beta_{ij}x_ix_j.
+\]
+Every sensitive coordinate has \(\alpha_i=1\).  On a pair of sensitive
+coordinates, Booleanity gives \(2+\beta_{ij}\in\{0,1\}\), so
+\(\beta_{ij}\in\{-2,-1\}\).  On any sensitive triple, a coefficient \(-2\)
+would force the triple value to be negative; hence all three pair coefficients
+are \(-1\).  Four sensitive coordinates are then impossible, because their
+all-one face value would be \(4-\binom42=-2\).
+
+In the equality case, the restriction to \(a,b,c\) is NAE.  For an outside
+coordinate \(k\), each \(\beta_{ik}\) with \(i\in\{a,b,c\}\) belongs to
+\(\{-1,0\}\).  Evaluating at \(e_a+e_b+e_c+e_k\) forces all three to zero.
+For two outside coordinates \(k,\ell\), Booleanity gives
+\(\beta_{k\ell}\in\{0,1\}\), while evaluation at
+\(e_a+e_k+e_\ell\) forces it to zero.
+\end{proof}
+
+\begin{theorem}[Gate-factor obstruction]\label{thm:gate-factor}
+Let \(T:\cube6\to\{0,1\}\) be arbitrary and put
+\[
+ F=T(g_0,g_1,g_2,g_3,x_{12},x_{13}),
+\]
+where the four raw blocks and the two coordinate ports are pairwise disjoint.
+If \(F(0)=0\) and \(F(e_j)=1\) for every \(0\le j<14\), then
+\(\deg F>5\).
+\end{theorem}
+
+\begin{proof}
+All 64 meta inputs are independently attainable, so \(T\) has a unique
+multilinear meta representation.  If \(\deg F\le5\),
+\cref{lem:weighted-signature} forces every meta coefficient of weight above
+five to vanish.  Set both ports to zero.  The remaining Boolean function of
+\(g_0,g_1,g_2,g_3\) has meta degree at most two, value zero at its origin, and
+value one at all four meta singletons.  This contradicts
+\cref{prop:quadratic}.
+\end{proof}
+
+\begin{remark}
+The target labels are essential: the constant function is a gate-factored
+counterexample without them.  The theorem does not cover raw orientation
+dependence inside a block.
+\end{remark}
+
+Let \(p_i=x_{i0}\oplus x_{i1}\oplus x_{i2}\) denote XOR parity on raw block
+\(i\).
+
+\begin{theorem}[Parity twist]\label{thm:parity-twist}
+For every Boolean meta function
+\(T(g_0,g_1,g_2,g_3,x_{12},x_{13})\), the Boolean function
+\[
+ F=T\oplus p_0\oplus p_1\oplus p_2\oplus p_3
+\]
+has real degree greater than five.
+\end{theorem}
+
+\begin{proof}
+Passing between bit variables and spin variables preserves the degree
+filtration.  Let \(q_T=1-2T\).  Expand \(q_T\) uniquely in the shifted block
+variables \(r_i=u_i-\tfrac12\) and the two port spins.  The output spin of
+\(F\) is
+\[
+ q_F=q_T\chi_0\chi_1\chi_2\chi_3.
+\]
+If \(\deg q_F\le5\), \cref{lem:walsh-signature} forces every sector with
+\(|U|\le3\) to vanish, since its core degree is at least six.  In the only
+remaining sector \(U=[4]\), the coefficient has port degree at most one.
+Thus
+\[
+ q_T=a(t_{12},t_{13})u_0u_1u_2u_3
+\]
+for an affine function \(a\) of the port spins.
+
+Fix the ports.  If \(a=0\), then \(q_T=0\), already contradicting Booleanity.
+Otherwise the right side has magnitude \(|a|\prod_i|u_i|\).  For one block,
+\(|u_i|=3/2\) on an all-equal raw
+orientation and \(|u_i|=1/2\) on a non-all-equal orientation.  All sixteen
+meta patterns are attainable, so the magnitude varies with the block outputs.
+This contradicts Booleanity, which requires \(|q_T|=1\) everywhere.
+\end{proof}
+
+\begin{remark}[Exact scope]
+This theorem concerns a meta function followed by the parity twist on all four
+blocks.  It proves nothing about a partial twist, a nonlinear orientation
+correction, or a \(T\) that already sees raw orientations.  Indeed, if raw
+orientation is allowed, choosing \(T=p_0\oplus p_1\oplus p_2\oplus p_3\)
+gives the constant zero function after twisting.
+\end{remark}
+
+\section{Two exact reformulations of every repair}\label{sec:exact-systems}
+
+The preceding theorems exclude particular structural classes.  We now record
+two descriptions that exclude nothing.  They are changes of coordinates on
+the full set of Boolean functions relative to the fixed function \(P\), not
+search restrictions.
+
+Let
+\[
+ \mathcal T=\{0,e_0,e_1,\ldots,e_{13}\}
+\]
+be the fifteen target rows, and put
+\[
+ \Delta=E_1E_3(E_0+E_2)=-P_6.
+\]
+
+\begin{theorem}[Exact additive residual system]\label{thm:additive}
+Let \(R:\cube{14}\to\mathbb R\), let the same symbol denote its unique real
+multilinear polynomial, and set \(F=P+R\).  Then \(F\) is Boolean, has degree
+at most five, and agrees with \(P\) on \(\mathcal T\) if and only if all three
+of the following hold:
+\begin{align}
+ R&=\Delta+L &&\text{for a multilinear polynomial }\deg L\le5,
+                                                        \label{eq:add-high}\\
+ R(x)\bigl(R(x)+2P(x)-1\bigr)&=0
+       &&\text{for every }x\in\cube{14},                 \label{eq:add-bool}\\
+ R(t)&=0 &&\text{for every }t\in\mathcal T.              \label{eq:add-label}
+\end{align}
+Consequently, every admissible Boolean \(F\) occurs exactly once, with
+\(R=F-P\).
+\end{theorem}
+
+\begin{proof}
+Since \(P\) has no terms above degree six and \(P_6=-\Delta\), cancellation
+of every term of degree at least six in \(P+R\) is equivalent to
+\cref{eq:add-high}.  This proves the degree equivalence, including the absence
+of any term of degree greater than six in \(R\).
+
+On a cube point, \(P^2=P\).  Therefore
+\[
+ F(F-1)=(P+R)(P+R-1)=R(R+2P-1).
+\]
+The left side vanishes exactly when \(F\in\{0,1\}\), proving
+\cref{eq:add-bool}.  More explicitly, where \(P=0\), the permitted residual
+values are \(R\in\{0,1\}\), and where \(P=1\), they are
+\(R\in\{0,-1\}\).  Finally, \(F(t)=P(t)\) is exactly \(R(t)=0\), which proves
+\cref{eq:add-label}.  The identity \(R=F-P\) proves uniqueness.
+\end{proof}
+
+All three conditions are indispensable.  The residuals \(R=-P\) and
+\(R=1-P\) satisfy the Boolean equation but give the constant-zero and
+constant-one functions, so they demonstrate the need for the target-row
+condition.  Conversely, \(R=\Delta\) satisfies the high-degree cancellation
+and vanishes on \(\mathcal T\), but at
+\(x=e_0+e_1+e_3+e_4+e_9+e_{10}\) one has
+\(P(x)=\Delta(x)=1\), hence \((P+R)(x)=2\).  This demonstrates the need for
+the Boolean equation.
+
+\begin{theorem}[Exact XOR correction system]\label{thm:xor}
+For every Boolean \(F:\cube{14}\to\{0,1\}\) there is a unique Boolean mask
+\[
+ J=P\oplus F,
+\]
+and pointwise, as an identity over the reals,
+\begin{equation}
+ F=P+(1-2P)J.                                             \label{eq:xor-real}
+\end{equation}
+Thus the Boolean functions of degree at most five that agree with \(P\) on
+\(\mathcal T\) are in bijection with the Boolean masks \(J\) satisfying
+\begin{equation}
+ J|_{\mathcal T}=0,\qquad
+ \deg_{\mathbb R}\bigl(P+(1-2P)J\bigr)\le5.              \label{eq:xor-exact}
+\end{equation}
+
+Every such mask necessarily satisfies
+\begin{equation}
+ \ANF_{\ge6}(J)=\ANF_{\ge6}(P),                           \label{eq:anf-high}
+\end{equation}
+which here consists of exactly the 54 degree-six masks in
+\(E_1E_3(E_0+E_2)\), and no higher mask.
+\end{theorem}
+
+\begin{proof}
+The first assertion is the pointwise identity
+\(a\oplus b=a+(1-2a)b\) for \(a,b\in\{0,1\}\).  It also gives
+\(J=P\oplus F\), so the representation is unique.  Equality of the target
+rows is equivalent to \(J=0\) there, proving the exact bijection
+\cref{eq:xor-exact}.
+
+For a Boolean function, reducing every integer coefficient of its real
+M\"obius expansion modulo two gives its \(\Ftwo\)-algebraic normal form.  If
+\(\deg_{\mathbb R}F\le5\), all real coefficients of \(F\) on masks of size at
+least six vanish and therefore so do the corresponding ANF coefficients.
+Since \(F=P\oplus J\), its ANF is the sum of the ANFs of \(P\) and \(J\).
+This proves \cref{eq:anf-high}.  The description of the high masks follows
+from \cref{thm:P} after reduction of \(-1\) modulo two.
+\end{proof}
+
+Equation~\eqref{eq:anf-high} immediately shows that any successful \(J\)
+depends on raw variables from all four NAE blocks.  It is nevertheless only a
+necessary parity condition; real-degree cancellation is stricter.
+
+Define the compact Boolean mask
+\begin{equation}
+ J_0=g_1g_3(g_0\oplus g_2).                               \label{eq:J0}
+\end{equation}
+Its degree-six ANF layer is precisely
+\(E_1E_3(E_0+E_2)\), and it has no higher ANF term.  Hence every mask
+satisfying \cref{eq:anf-high} can be written uniquely as
+\[
+ J=J_0\oplus W,
+ \qquad \deg_{\Ftwo}W\le5.
+\]
+This is again a reparameterization, not an assertion that \(W\) is local,
+factored, or otherwise simple.  Theorems~\ref{thm:gate-factor} and
+\ref{thm:parity-twist} explain why two especially natural simplifications do
+not suffice.
+
+\section{The exact failure of the simplest mask \texorpdfstring{\(J_0\)}{J0}}
+\label{sec:J0}
+
+The degree of \(J_0\) must not be confused with the degree of the repaired
+function.  The former is eight; the latter is ten.
+
+\begin{theorem}[The function \(P\oplus J_0\) has degree ten]\label{thm:J0}
+The real multilinear degree of \(J_0\) is eight, with top component
+\[
+ (J_0)_8=-2E_0E_1E_2E_3.
+\]
+For
+\[
+ F_0=P\oplus J_0
+\]
+the real multilinear degree is ten, and
+\[
+ (F_0)_{10}=4E_0E_1E_2E_3x_{12}x_{13}.
+\]
+Thus \(F_0\) has exactly \(3^4=81\) degree-ten monomials, each with
+coefficient \(+4\).
+\end{theorem}
+
+\begin{proof}
+At the six meta inputs \(y=(y_0,y_1,y_2,y_3,y_4,y_5)\), the real polynomial
+of \(J_0\) is
+\[
+ j=y_1y_3(y_0+y_2-2y_0y_2).
+\]
+The unique weight-eight term after substituting the four heavy NAE gates is
+\(-2g_0g_1g_2g_3\), whose top component is
+\(-2E_0E_1E_2E_3\).  Weighted top-signature noncancellation proves that it is
+nonzero and that no term has larger degree.
+
+Multilinearizing the meta function \(K\oplus j=K+j-2Kj\) gives
+\begin{align*}
+ K
+ &-y_0y_1y_3-y_1y_2y_3+2y_0y_1y_2y_3\\
+ &+2y_0y_1y_3y_4+2y_1y_2y_3y_4
+  +2y_0y_1y_3y_5+2y_1y_2y_3y_5\\
+ &-4y_0y_1y_2y_3y_4-4y_0y_1y_2y_3y_5\\
+ &-2y_0y_1y_3y_4y_5-2y_1y_2y_3y_4y_5
+  +4y_0y_1y_2y_3y_4y_5.
+\end{align*}
+Only the final meta monomial has weighted degree ten.  Substituting
+\(y_i=g_i\) for \(0\le i<4\), \(y_4=x_{12}\), and \(y_5=x_{13}\), its top
+signature is
+\(4E_0E_1E_2E_3x_{12}x_{13}\).  The weighted-signature lemma proves both
+noncancellation and the absence of any higher term.  Each \(E_i\) offers three
+pair choices on a disjoint block, giving exactly \(3^4=81\) monomials.
+\end{proof}
+
+For completeness, exact integer M\"obius inversion gives the following full
+nonzero coefficient profile.  An entry \(c:m\) means that exactly \(m\)
+monomials of that degree have coefficient \(c\).
+\begin{center}
+\begin{tabular}{ccl}
+\toprule
+degree & number nonzero & coefficient multiplicities\\
+\midrule
+1  & 14   & \(+1:14\)\\
+2  & 91   & \(-1:91\)\\
+3  & 192  & \(+1:192\)\\
+4  & 357  & \(-1:168,\ +2:189\)\\
+5  & 918  & \(-4:162,\ -2:702,\ +1:54\)\\
+6  & 1701 & \(+2:972,\ +4:729\)\\
+7  & 1890 & \(-2:594,\ -4:1296\)\\
+8  & 1269 & \(+2:135,\ +4:1134\)\\
+9  & 486  & \(-4:486\)\\
+10 & 81   & \(+4:81\)\\
+\bottomrule
+\end{tabular}
+\end{center}
+The total is 6999 nonzero coefficients.  The table is a reproducible finite
+calculation, whereas the degree-ten and 81-term assertions in
+\cref{thm:J0} are proved independently of it.
+
+\section{Further exact obstructions and residual constraints}
+
+The central no-go theorems already show that a successful correction, if one
+exists, cannot be a selector extension of \(A\), a target-labelled function of
+the six meta outputs alone, or a full four-block parity twist of such a meta
+function.  Two additional consequences clarify the remaining scope.
+
+\begin{corollary}[Rigidity of the fixed outer routing]
+For \(0\le i<4\), let \(h_i\) be a Boolean function of real degree at most two
+that vanishes at its own origin and is sensitive there in all three
+coordinates of a designated raw-coordinate triple \(X_i\).  Assume the
+\(X_i\) are pairwise disjoint and route \(h_i\) to input \(i\) of \(K\).
+Route two further raw coordinates, distinct from one another and from every
+\(X_i\), to inputs \(4\) and \(5\).  Then, after relabeling within blocks, the
+four quadratic gates are exactly the four NAE gates used in \(P\).  The
+composite therefore has the nonzero degree-six layer in \cref{thm:P} and is
+sensitive in all fourteen designated directions.
+\end{corollary}
+
+\begin{proof}
+Each quadratic gate must be sensitive in all three of its designated
+coordinates.  Proposition~\ref{prop:quadratic} makes it NAE on exactly that
+triple and independent of every other coordinate.  The claimed composite is
+therefore \(P\) up to within-block relabeling, which preserves its degree-six
+top signatures.
+\end{proof}
+
+There is also a local constraint on every exact correction.  For either outer
+design block \(013\) or \(123\), choose one of the three quadratic monomials
+from each associated \(E_i\).  Fix all other raw variables, including both
+ports, to zero.  On the resulting six-dimensional face, each restricted NAE
+gate is \(\OR_2\), and the restriction of \(P\) is \(\OR_6\).  There are 27
+faces of each block signature, hence 54 such faces.
+
+\begin{proposition}[Alternating zero-set constraint]\label{prop:or6}
+Let \(F:\cube6\to\{0,1\}\) have degree at most five, with \(F(0)=0\), and
+let
+\[
+ Z=\{x\ne0:F(x)=0\}.
+\]
+Then
+\[
+ \sum_{x\in Z}(-1)^{|x|}=-1.
+\]
+Consequently, every degree-five target-preserving correction of \(P\) must
+satisfy this identity on each of the 54 \(\OR_6\) faces above.
+\end{proposition}
+
+\begin{proof}
+The coefficient of the full six-variable monomial is
+\[
+ \sum_{x\in\cube6}(-1)^{6-|x|}F(x)
+ =\sum_{x\in\cube6}(-1)^{|x|}F(x).
+\]
+It vanishes because \(\deg F\le5\).  Also
+\(\sum_{x\in\cube6}(-1)^{|x|}=0\), while the origin is not in \(Z\).
+Subtracting the zero-set contribution from the full alternating sum proves
+the formula.  Restriction cannot increase degree, so it applies to every
+listed face.
+\end{proof}
+
+This condition is necessary, not sufficient.  In particular, it does not
+replace either exact system in \cref{sec:exact-systems}.
+
+\section{Standalone exact verifier}\label{sec:verifier}
+
+The supplementary script \texttt{verify\_exact.py} is standalone, uses only
+the Python standard library, and has no numerical or symbolic-algebra
+dependency.  It constructs \(K,P,A,J_0\), and \(P\oplus J_0\) from the
+displayed formulas.  For a truth vector \(v[0],\ldots,v[2^n-1]\) in numeric
+mask order, it performs the in-place integer subset transform
+\[
+ c\leftarrow v;\qquad
+ c[m]\leftarrow c[m]-c[m\setminus\{i\}]
+ \quad(i=0,\ldots,n-1;\ i\in m).
+\]
+The resulting \(c[m]\) are exactly the real multilinear M\"obius
+coefficients; no division or floating-point operation occurs.
+
+The verifier computes every real multilinear coefficient and checks the
+claimed Booleanity, origin sensitivities, degrees, top supports, and the
+complete coefficient histogram of \(P\oplus J_0\).  Its deterministic summary
+is:
+\begin{center}
+\begingroup
+\small
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lrrrrl}
+\toprule
+function & variables & degree & origin sensitivity & nonzero coefficients
+& top layer\\
+\midrule
+\(K\)            & 6  & 3  & 6  & 31   & ten coefficient-\(+1\) cubics\\
+\(A\)            & 12 & 5  & 12 & 421  & 54 coefficients \(+1\)\\
+\(P\)            & 14 & 6  & 14 & 951  & 54 coefficients \(-1\)\\
+\(J_0\)          & 14 & 8  & 0  & 1728 & 81 coefficients \(-2\)\\
+\(P\oplus J_0\) & 14 & 10 & 14 & 6999 & 81 coefficients \(+4\)\\
+\bottomrule
+\end{tabular}
+\endgroup
+\end{center}
+The script exits nonzero upon failure of any encoded assertion.  The
+diagnostic row for \(J_0\) is included specifically to prevent the erroneous statement
+\(\deg J_0=10\): the degree-ten object is \(P\oplus J_0\).
+
+\section{What is and is not resolved}
+
+The two parameterizations are exact and complete relative to the fixed base
+\(P\), but the obstruction theorems exclude only their stated subfamilies.
+They leave open whether there exists a Boolean mask \(J\), equivalently an
+additive residual \(R\), satisfying the systems in
+\cref{thm:additive,thm:xor}.  Any such correction must obey the 54 forced ANF
+masks, the target rows, the real Boolean equations, the degree cancellation,
+and the local alternating constraints.  It must also evade the selector,
+gate-factor, fixed-routing, and full-parity-twist theorems.  These facts point
+to raw orientation-dependent interactions across blocks, but they do not
+constitute an existence theorem, a completeness result for any smaller
+family, or a lower bound for all degree-five functions.
+
+In particular, this paper proves no degree-five, sensitivity-fourteen
+construction and therefore no new asymptotic separation.  The phrase
+``near-solution'' refers only to the explicit degree-six function \(P\) and
+its explicitly computed degree-six homogeneous component.
+
+\section*{Generative-AI disclosure}
+
+Generative-AI systems were used extensively for conjecture generation,
+symbolic exploration, code generation, proof drafting, internal auditing, and
+manuscript editing.  The named human authors reviewed the final theorem
+statements, proofs, computations, and references and accept responsibility for
+the contents.
+
+\bibliographystyle{alpha}
+\bibliography{references}
+
+\end{document}
